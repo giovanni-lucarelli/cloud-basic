@@ -22,11 +22,7 @@
 
 Contemporary computing relies heavily on technologies that optimize resource allocation and application management. Virtualization, primarily implemented via Virtual Machines (VMs), provides hardware abstraction, allowing the execution of multiple, fully independent guest operating systems on a single physical host, ensuring strong isolation. In contrast, containerization, exemplified by Docker, offers OS-level virtualization. It isolates application processes within containers that share the host's kernel but have their own filesystem and dependencies, resulting in lower overhead and faster instantiation. The widespread adoption of both VMs and containers underscores their importance in enabling server consolidation, simplifying deployment pipelines, facilitating microservices architectures, and forming the bedrock of cloud-based services.
 
-The objective of this project is to conduct a comparative performance evaluation of Virtual Machines (VMs) and Containers, specifically focusing on VirtualBox and Docker. The evaluation will be based on a series of benchmarks that measure various performance metrics, including CPU, memory, disk I/O, and network throughput. The report is structured as follows:
-1. **Methodology**: This section outlines the specifications of the host system, the setup of the virtual machines and containers, and the benchmarking tools used for the evaluation.
-2. **Results and Discussion**: This section presents the results of the performance benchmarks, along with a discussion of the implications of these results.
-3. **Conclusion**: This section summarizes the key findings of the report and provides recommendations for future work.
-
+The objective of this project is to conduct a comparative performance evaluation of Virtual Machines (VMs) and Containers, specifically focusing on VirtualBox and Docker. The evaluation will be based on a series of benchmarks that measure various performance metrics, including CPU, memory, disk I/O, and network throughput. 
 ## Methodology
 
 ### Host System Specifications 
