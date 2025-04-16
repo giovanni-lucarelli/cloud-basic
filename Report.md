@@ -1,6 +1,7 @@
 # Comparative Performance Evaluation of Virtual Machine (VirtualBox) and Container (Docker) Environments for a Cluster of Nodes
 
 ## Table of Contents
+
 - [Comparative Performance Evaluation of Virtual Machine (VirtualBox) and Container (Docker) Environments for a Cluster of Nodes](#comparative-performance-evaluation-of-virtual-machine-virtualbox-and-container-docker-environments-for-a-cluster-of-nodes)
   - [Table of Contents](#table-of-contents)
   - [Introduction](#introduction)
@@ -8,7 +9,7 @@
     - [Host System Specifications](#host-system-specifications)
     - [Virtual Machine (VM) Setup](#virtual-machine-vm-setup)
       - [Template Machine Creation](#template-machine-creation)
-      - [Network Adapters and Port Forwardig](#network-adapters-and-port-forwardig)
+      - [Network Adapters Configuration](#network-adapters-configuration)
       - [Master Node Configuration](#master-node-configuration)
       - [Worker Nodes Configuration](#worker-nodes-configuration)
     - [Container Setup](#container-setup)
@@ -16,7 +17,6 @@
     - [Test Procedures](#test-procedures)
   - [Results and Discussion](#results-and-discussion)
   - [Conclusion](#conclusion)
-
 
 ## Introduction
 
@@ -69,7 +69,7 @@ The template VM has been cloned to create `cluster01` (master) and `node01` (wor
 
 > **Note:** when cloning the template VM, it is important to select the option "Reinitialize the MAC address of all network cards" in order to avoid conflicts in the network configuration.
 
-#### Network Adapters and Port Forwardig 
+#### Network Adapters Configuration
 
 The network configuration is done using the VirtualBox GUI. Two network adapters are created:
 1. **Adapter 1**: NAT, which allows the master to access the Internet through the host machine.
@@ -93,7 +93,7 @@ scp -P 2222 key_id.pub user01@127.0.0.1:~
 In this way it is possible to connect to the master VM using the following command:
 
 ```{bash}  
-ssh -p 2222 user01@127.0.0.1
+ssh -p 2222 username@127.0.0.1
 ```
 
 #### Master Node Configuration
@@ -139,6 +139,12 @@ in order to apply the configuration, the following command is used:
 ```{bash}
 sudo netplan apply
 ```
+
+>**Note**:
+>Disabling cloud-init ensures your netplan changes remain after reboot.
+>```
+>sudo touch /etc/cloud/cloud-init.disabled
+>```
 
 **DNS Configuration**
 
@@ -214,6 +220,95 @@ sudo systemctl restart nfs-kernel-server
 ```
 
 #### Worker Nodes Configuration
+
+Analogously to the master node, the hostname of the worker nodes has been changed using the following command:
+
+```{bash}
+sudo nano /etc/hostname
+```
+The hostname has been changed from `template` to `node01`. 
+
+**Network Configuration**
+
+The network configuration file, located in `/etc/netplan/50-cloud-init.yaml`, it has been modified as follows:
+
+```{yaml}
+network:
+  ethernets:
+    enp0s8:
+      dhcp4: true
+      dhcp-identifier: mac
+      nameservers:
+        addresses: [192.168.0.1]
+      routes:
+        - to: 0.0.0.0/0
+          via: 192.168.0.1
+```
+
+and applied using
+
+```{bash}
+sudo netplan apply
+```
+The DNS server has been configured using:
+
+```{bash}
+sudo ln -fs /run/systemd/resolve/resolv.conf /etc/resolv.conf
+```
+
+**SSH Configuration**
+
+In order to access the worker nodes through the master (not from the host, because of the internal network), the SSH service has been configured using the following command:
+
+```{bash}
+// on the master node
+ssh-keygen -t rsa -b 4096
+ssh-copy-id node01
+```
+
+after doing this it is possible to access the worker nodes using
+
+```{bash}
+ssh node01
+```
+
+**Distributed File System Configuration**
+
+To create a mount point for the shared directory, the following command is used:
+```
+sudo mkdir /shared
+```
+then to Mount the shared directory from the master node to this folder:
+```
+sudo mount 192.168.0.1:/shared /shared
+```
+
+and to make the mount persistent across reboots the package AutoFS is installed
+
+```{bash}
+sudo apt -y install autofs
+```
+
+then in the `auto.master` configuration file the following line has been added in order to include the mount point
+
+```
+/- /etc/auto.mount
+```
+
+In order to define the NFS mount the AutoFS configuration file (`auto.mount`) has been created and the following line has been added:
+```yaml
+/shared -fstype=nfs,rw  192.168.0.1:/shared
+```
+
+and to apply changes
+
+```
+sudo systemctl restart autofs
+```
+
+**Clone the Worker Node**
+
+The second worker node has been cloned from the first one after its configuration. The hostname of the second worker node has been changed in the usual way in `node02`. 
 
 ### Container Setup
 
