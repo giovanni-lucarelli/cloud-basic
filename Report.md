@@ -1,19 +1,15 @@
-# Comparative Performance Evaluation of Virtual Machine (VirtualBox) and Container (Docker) Environments
+# Comparative Performance Evaluation of Virtual Machine (VirtualBox) and Container (Docker) Environments for a Cluster of Nodes
 
 ## Table of Contents
-- [Comparative Performance Evaluation of Virtual Machine (VirtualBox) and Container (Docker) Environments](#comparative-performance-evaluation-of-virtual-machine-virtualbox-and-container-docker-environments)
+- [Comparative Performance Evaluation of Virtual Machine (VirtualBox) and Container (Docker) Environments for a Cluster of Nodes](#comparative-performance-evaluation-of-virtual-machine-virtualbox-and-container-docker-environments-for-a-cluster-of-nodes)
   - [Table of Contents](#table-of-contents)
   - [Introduction](#introduction)
   - [Methodology](#methodology)
     - [Host System Specifications](#host-system-specifications)
     - [Virtual Machine (VM) Setup](#virtual-machine-vm-setup)
       - [Template Machine Creation](#template-machine-creation)
-      - [Network Adapters Configuration](#network-adapters-configuration)
-      - [Port Forwarding and SSH Host-Master Configuration](#port-forwarding-and-ssh-host-master-configuration)
+      - [Network Adapters and Port Forwardig](#network-adapters-and-port-forwardig)
       - [Master Node Configuration](#master-node-configuration)
-        - [DNS Configuration](#dns-configuration)
-        - [Gateway Configuration](#gateway-configuration)
-        - [Distributed File System Configuration](#distributed-file-system-configuration)
       - [Worker Nodes Configuration](#worker-nodes-configuration)
     - [Container Setup](#container-setup)
     - [Benchmarking Tools](#benchmarking-tools)
@@ -26,7 +22,7 @@
 
 Contemporary computing relies heavily on technologies that optimize resource allocation and application management. Virtualization, primarily implemented via Virtual Machines (VMs), provides hardware abstraction, allowing the execution of multiple, fully independent guest operating systems on a single physical host, ensuring strong isolation. In contrast, containerization, exemplified by Docker, offers OS-level virtualization. It isolates application processes within containers that share the host's kernel but have their own filesystem and dependencies, resulting in lower overhead and faster instantiation. The widespread adoption of both VMs and containers underscores their importance in enabling server consolidation, simplifying deployment pipelines, facilitating microservices architectures, and forming the bedrock of cloud-based services.
 
-The objective of this report is to conduct a comparative performance evaluation of Virtual Machines (VMs) and Containers, specifically focusing on VirtualBox and Docker. The evaluation will be based on a series of benchmarks that measure various performance metrics, including CPU, memory, disk I/O, and network throughput. The report is structured as follows:
+The objective of this project is to conduct a comparative performance evaluation of Virtual Machines (VMs) and Containers, specifically focusing on VirtualBox and Docker. The evaluation will be based on a series of benchmarks that measure various performance metrics, including CPU, memory, disk I/O, and network throughput. The report is structured as follows:
 1. **Methodology**: This section outlines the specifications of the host system, the setup of the virtual machines and containers, and the benchmarking tools used for the evaluation.
 2. **Results and Discussion**: This section presents the results of the performance benchmarks, along with a discussion of the implications of these results.
 3. **Conclusion**: This section summarizes the key findings of the report and provides recommendations for future work.
@@ -77,13 +73,12 @@ The template VM has been cloned to create `cluster01` (master) and `node01` (wor
 
 > **Note:** when cloning the template VM, it is important to select the option "Reinitialize the MAC address of all network cards" in order to avoid conflicts in the network configuration.
 
-#### Network Adapters Configuration
+#### Network Adapters and Port Forwardig 
 
 The network configuration is done using the VirtualBox GUI. Two network adapters are created:
 1. **Adapter 1**: NAT, which allows the master to access the Internet through the host machine.
 2. **Adapter 2**: Internal Network, which allows the VMs to communicate with each other. To each VM is assigned a dynamic IP address.
 
-#### Port Forwarding and SSH Host-Master Configuration
 The port forwarding is configured in the VirtualBox GUI, so that the SSH service can be accessed from the host machine. The following ports are used:
 
 | Name | Protocol | Host IP | Host Port | Guest Port |
@@ -149,7 +144,7 @@ in order to apply the configuration, the following command is used:
 sudo netplan apply
 ```
 
-##### DNS Configuration
+**DNS Configuration**
 
 The DHCP server is configured using the `dnsmasq` tool. The configuration file is located in `/etc/dnsmasq.conf` and it is as follows:
 
@@ -179,7 +174,7 @@ the application of the changes is done using the following command:
 sudo systemctl restart dnsmasq systemd-resolved
 ```
 
-##### Gateway Configuration
+**Gateway Configuration**
 
 The gateway is configured by creating the file `etc/sysctl.d/99-sysctl.conf` with the following content:
 
@@ -199,7 +194,7 @@ sudo iptables -t nat -A POSTROUTING -o enp0s3 -j MASQUERADE
 sudo netfilter-persistent save
 ```
 
-##### Distributed File System Configuration
+**Distributed File System Configuration**
 
 A shared directory is created in the master node using the following command:
 
