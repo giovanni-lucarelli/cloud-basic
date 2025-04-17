@@ -19,8 +19,6 @@ services:
     build: .
     container_name: node01
     hostname: node01
-    depends_on:
-      - cluster01
     networks:
       internal-net:
     deploy:
@@ -38,8 +36,6 @@ services:
     build: .
     container_name: node02
     hostname: node02
-    depends_on:
-      - cluster01
     networks:
       internal-net:
     deploy:

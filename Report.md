@@ -11,12 +11,12 @@
 - [Methodology](#methodology)
   - [Host System Specifications](#host-system-specifications)
   - [Virtual Machine (VM) Setup](#virtual-machine-vm-setup)
-    - [Template Machine Creation](#template-machine-creation)
+    - [Template Machine Configuration](#template-machine-configuration)
     - [Network Adapters Configuration](#network-adapters-configuration)
     - [Master Node Configuration](#master-node-configuration)
     - [Worker Nodes Configuration](#worker-nodes-configuration)
   - [Container Setup](#container-setup)
-    - [Template Machine Creation (Dockerfile)](#template-machine-creation-dockerfile)
+    - [Template Machine Configuration (Dockerfile)](#template-machine-configuration-dockerfile)
     - [Cluster Configuration (Docker Compose)](#cluster-configuration-docker-compose)
     - [Starting the Cluster](#starting-the-cluster)
   - [Benchmarking Tools](#benchmarking-tools)
@@ -43,7 +43,7 @@ The objective of this project is to conduct a comparative performance evaluation
 
 The cluster is built in Oracle VirtualBox (`version ???`) and it is made up by one master node `cluster01` and two worker nodes, namely `node01` and `node02`. The three of them are interconnected using an internal network and the workers inherited the Internet access through the master node, which act as DNS, DHCP and gateway of the cluster.
 
-#### Template Machine Creation
+#### Template Machine Configuration
 
 All the VMs have the same specifications:
 
@@ -318,7 +318,7 @@ The second worker node has been cloned from the first one after its configuratio
 
 Firt of all, the Docker service has been installed according to the documentation available at [docker website](https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository).
 
-#### Template Machine Creation (Dockerfile)
+#### Template Machine Configuration (Dockerfile)
 
 The Dockerfile is used to create the image of the container. The content of the Dockerfile is as follows:
 
