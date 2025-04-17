@@ -1,26 +1,30 @@
-# Comparative Performance Evaluation of Virtual Machine (VirtualBox) and Container (Docker) Environments for a Cluster of Nodes
+# Comparative Performance Evaluation of Virtual Machine (VirtualBox) and Container (Docker) Environments
+
+**Author:** Giovanni Lucarelli
+
 
 ## Table of Contents
 
-- [Comparative Performance Evaluation of Virtual Machine (VirtualBox) and Container (Docker) Environments for a Cluster of Nodes](#comparative-performance-evaluation-of-virtual-machine-virtualbox-and-container-docker-environments-for-a-cluster-of-nodes)
-  - [Table of Contents](#table-of-contents)
-  - [Introduction](#introduction)
-  - [Methodology](#methodology)
-    - [Host System Specifications](#host-system-specifications)
-    - [Virtual Machine (VM) Setup](#virtual-machine-vm-setup)
-      - [Template Machine Creation](#template-machine-creation)
-      - [Network Adapters Configuration](#network-adapters-configuration)
-      - [Master Node Configuration](#master-node-configuration)
-      - [Worker Nodes Configuration](#worker-nodes-configuration)
-    - [Container Setup](#container-setup)
-    - [Benchmarking Tools](#benchmarking-tools)
-    - [Test Procedures](#test-procedures)
-  - [Results and Discussion](#results-and-discussion)
-  - [Conclusion](#conclusion)
+
+- [Table of Contents](#table-of-contents)
+- [Introduction](#introduction)
+- [Methodology](#methodology)
+  - [Host System Specifications](#host-system-specifications)
+  - [Virtual Machine (VM) Setup](#virtual-machine-vm-setup)
+    - [Template Machine Creation](#template-machine-creation)
+    - [Network Adapters Configuration](#network-adapters-configuration)
+    - [Master Node Configuration](#master-node-configuration)
+    - [Worker Nodes Configuration](#worker-nodes-configuration)
+  - [Container Setup](#container-setup)
+    - [Template Machine Creation (Dockerfile)](#template-machine-creation-dockerfile)
+    - [Cluster Configuration (Docker Compose)](#cluster-configuration-docker-compose)
+    - [Starting the Cluster](#starting-the-cluster)
+  - [Benchmarking Tools](#benchmarking-tools)
+  - [Test Procedures](#test-procedures)
+- [Results and Discussion](#results-and-discussion)
+- [Conclusion](#conclusion)
 
 ## Introduction
-
-Contemporary computing relies heavily on technologies that optimize resource allocation and application management. Virtualization, primarily implemented via Virtual Machines (VMs), provides hardware abstraction, allowing the execution of multiple, fully independent guest operating systems on a single physical host, ensuring strong isolation. In contrast, containerization, exemplified by Docker, offers OS-level virtualization. It isolates application processes within containers that share the host's kernel but have their own filesystem and dependencies, resulting in lower overhead and faster instantiation. The widespread adoption of both VMs and containers underscores their importance in enabling server consolidation, simplifying deployment pipelines, facilitating microservices architectures, and forming the bedrock of cloud-based services.
 
 The objective of this project is to conduct a comparative performance evaluation of Virtual Machines (VMs) and Containers, specifically focusing on VirtualBox and Docker. The evaluation will be based on a series of benchmarks that measure various performance metrics, including CPU, memory, disk I/O, and network throughput. 
 ## Methodology
@@ -311,6 +315,160 @@ sudo systemctl restart autofs
 The second worker node has been cloned from the first one after its configuration. The hostname of the second worker node has been changed in the usual way in `node02`. 
 
 ### Container Setup
+
+Firt of all, the Docker service has been installed according to the documentation available at [docker website](https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository).
+
+#### Template Machine Creation (Dockerfile)
+
+The Dockerfile is used to create the image of the container. The content of the Dockerfile is as follows:
+
+```{dockerfile}
+FROM ubuntu:latest
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y \
+    build-essential wget curl \
+    openssh-server rsync iputils-ping \
+    dnsmasq ssh iptables-persistent \
+    iozone3 iperf3 netcat-openbsd \
+    stress-ng sysbench openmpi-bin libopenmpi-dev hpcc \
+    nfs-common nfs-kernel-server sudo \
+    && rm -rf /var/lib/apt/lists/*
+
+# Add the user
+RUN useradd -m -s /bin/bash user01 && echo "user01:0000" | chpasswd \
+    && echo "user01 ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
+# Create SSH directory and generate keys for user01
+RUN mkdir -p /home/user01/.ssh && \
+    ssh-keygen -t rsa -N '' -f /home/user01/.ssh/id_rsa && \
+    cat /home/user01/.ssh/id_rsa.pub > /home/user01/.ssh/authorized_keys && \
+    chmod 700 /home/user01/.ssh && \
+    chmod 600 /home/user01/.ssh/id_rsa /home/user01/.ssh/authorized_keys && \
+    chown -R user01:user01 /home/user01/.ssh
+
+# Copy the public key to a shared location (optional)
+RUN cp /home/user01/.ssh/id_rsa.pub /tmp/user01_rsa.pub
+
+# Create the directory for privilege separation
+RUN mkdir -p /run/sshd
+
+# Generating the host keys is important for SSH to work properly
+# The -A flag generates all the default keys
+RUN ssh-keygen -A
+
+# Expose the SSH port
+EXPOSE 22
+
+# Switch to user01
+USER user01
+WORKDIR /home/user01
+
+# Start the SSH server
+# The -D flag runs the server in the foreground
+# The -e flag enables logging to stderr
+CMD ["sudo", "/usr/sbin/sshd", "-D", "-e"]
+
+```
+
+#### Cluster Configuration (Docker Compose)
+
+The cluster is built using Docker Compose. The `docker-compose.yml` file is as follows:
+
+```{yaml}
+services:
+  cluster01:
+    build: .
+    container_name: cluster01
+    hostname: cluster01
+    networks:
+      internal-net:
+    deploy:
+      resources:
+        limits:
+          cpus: "2"
+          memory: 2G
+    ports:
+      - "2220:22"
+    volumes:
+      - shared-data:/shared
+
+  node01:
+    build: .
+    container_name: node01
+    hostname: node01
+    depends_on:
+      - cluster01
+    networks:
+      internal-net:
+    deploy:
+      resources:
+        limits:
+          cpus: "2"
+          memory: 2G
+    ports:
+      - "2221:22"
+    volumes:
+      - shared-data:/shared
+
+
+  node02:
+    build: .
+    container_name: node02
+    hostname: node02
+    depends_on:
+      - cluster01
+    networks:
+      internal-net:
+    deploy:
+      resources:
+        limits:
+          cpus: "2"
+          memory: 2G
+    ports:
+      - "2222:22"
+    volumes:
+      - shared-data:/shared
+
+networks:
+  internal-net:
+    driver: bridge
+
+volumes:
+  shared-data:
+    driver: local
+```
+
+#### Starting the Cluster
+The cluster is started using the following command:
+
+```{bash}
+docker-compose --build up -d
+```
+This command will build the images and start the containers in detached mode. The containers can be accessed using the following command:
+
+```{bash}
+docker exec -it cluster01 bash
+# or
+ssh -p 2220 user01@localhost
+```
+In order to give the user01 the permission to access the shared directory, the following command is used:
+
+```{bash}
+sudo chown -R user01:user01 /shared
+```
+
+In order to access the each node from each other, the SSH service has been configured manually using , from `cluster01` for example:
+
+```{bash}
+ssh node01
+exit
+ssh node02
+exit
+```
+
+and analogously for the other nodes.
 
 ### Benchmarking Tools
 ### Test Procedures
