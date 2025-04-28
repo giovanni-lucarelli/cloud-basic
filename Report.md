@@ -20,7 +20,8 @@
     - [Cluster Configuration (Docker Compose)](#cluster-configuration-docker-compose)
     - [Starting the Cluster](#starting-the-cluster)
   - [Benchmarking Tools](#benchmarking-tools)
-  - [Test Procedures](#test-procedures)
+  - [Testing Procedures](#testing-procedures)
+    - [CPU Benchmarking](#cpu-benchmarking)
 - [Results and Discussion](#results-and-discussion)
 - [Conclusion](#conclusion)
 
@@ -83,7 +84,7 @@ The port forwarding is configured in the VirtualBox GUI, so that the SSH service
 
 | Name | Protocol | Host IP | Host Port | Guest Port |
 |------|----------|---------|-----------|------------|
-| ssh | TCP | 127.0.0.1 | 2222 | 22 |
+| ssh | TCP | 127.0.0.1 | 3333 | 22 |
 
 The SSH service is configured to allow the host machine to connect to the VMs using the following command (after starting the master VM):
 
@@ -91,13 +92,13 @@ The SSH service is configured to allow the host machine to connect to the VMs us
 // on the host machine
 ssh-keygen
 cd ~/.ssh
-scp -P 2222 key_id.pub user01@127.0.0.1:~
+scp -P 3333 key_id.pub user01@127.0.0.1:~
 ```
 
 In this way it is possible to connect to the master VM using the following command:
 
 ```{bash}  
-ssh -p 2222 username@127.0.0.1
+ssh -p 3333 user01@127.0.0.1
 ```
 
 #### Master Node Configuration
@@ -471,7 +472,196 @@ exit
 and analogously for the other nodes.
 
 ### Benchmarking Tools
-### Test Procedures
+In order to perform the analysis the following tools have been used:
+
+//TODO: write about each benchmarking score and its semantic meaning
+
+- **CPU benchmarking**: HPC Challenge Benchmark for high-performance computation benchmarking
+- **General System Test**: `stress-ng` and `sysbench` to evaluate CPU and memory performance.
+- **Disk I/O Test**: Use `iozone` to test local and NFS filesystem I/O.
+- **Network Test**: `iperf` to measure network throughput and latency between nodes.
+
+### Testing Procedures
+In order to have meaningful measurements, the tests have been performed in a controlled environment. The following steps have been followed:
+1. The host machine has been rebooted before starting the tests.
+2. The VMs and containers have been started and the tests have been performed in the same order for both environments.
+3. Same version of the tools have been used in both environments, and the same parameters have been used for the tests.
+4. Ensured that no other heavy processes were running on the host machine during the tests.
+5. Each test has been performed 5 times and the average value has been taken into account, in order to reduce the impact of random fluctuations in the measurements.
+6. Each benchmark has been tested on: VMs, containers and local host (when possible, *i.e.* ...)
+
+>**Note:** Since both the VMs and containers are running on the same OS, the same scripts have been used to perform the tests.
+
+Since we're testing the cluster environment and most of the tests need passwordless ssh protocol (from master to workers) is a good practice to run the following command befor running the tests (both no VMs and containers):
+
+```
+mpirun -np 4 -hostfile hosts hostname
+```
+
+the expected output is
+
+```
+node01
+node01
+node02
+node02
+```
+
+#### CPU Benchmarking
+
+##### HPCC
+
+The configuration file for the HPCC:
+
+```
+HPLinpack benchmark input file
+Innovative Computing Laboratory, University of Tennessee
+HPL.out      output file name (if any) 
+6            device out (6=stdout,7=stderr,file)
+1            # of problems sizes (N)
+20352         Ns
+1            # of NBs
+192           NBs
+0            PMAP process mapping (0=Row-,1=Column-major)
+1            # of process grids (P x Q)
+2            Ps
+2            Qs
+16.0         threshold
+1            # of panel fact
+2            PFACTs (0=left, 1=Crout, 2=Right)
+1            # of recursive stopping criterium
+4            NBMINs (>= 1)
+1            # of panels in recursion
+2            NDIVs
+1            # of recursive panel fact.
+1            RFACTs (0=left, 1=Crout, 2=Right)
+1            # of broadcast
+1            BCASTs (0=1rg,1=1rM,2=2rg,3=2rM,4=Lng,5=LnM)
+1            # of lookahead depth
+1            DEPTHs (>=0)
+2            SWAP (0=bin-exch,1=long,2=mix)
+64           swapping threshold
+0            L1 in (0=transposed,1=no-transposed) form
+0            U  in (0=transposed,1=no-transposed) form
+1            Equilibration (0=no,1=yes)
+8            memory alignment in double (> 0)
+##### This line (no. 32) is ignored (it serves as a separator). ######
+0                               Number of additional problem sizes for PTRANS
+1200 10000 30000                values of N
+0                               number of additional blocking sizes for PTRANS
+40 9 8 13 13 20 16 32 64        values of NB
+```
+
+and the test has been repeated three times using the command:
+
+```
+mpirun -np 4 -hostfile hosts hpcc
+```
+
+##### stress-ng
+
+basic stressng command
+
+```
+mpirun -np 4 -hostfile hosts stress-ng --cpu 1 --timeout 60s --metrics-brief | tee stress_ng_cpu_results.txt
+mpirun -np 4 -hostfile hosts stress-ng --vm 1 --vm-bytes 1G --timeout 60s --metrics-brief | tee stress_ng_vm_results.txt
+mpirun -np 4 -hostfile hosts stress-ng --hdd 1 --timeout 60s --metrics-brief | tee stress_ng_hdd_results.txt
+```
+
+advanced stress-ng bash script to repeat the experiment multiple times
+
+```
+#!/bin/bash
+
+# File hosts MPI
+HOSTFILE="hosts"
+
+# number of repetitions for each test
+REPEAT=5
+
+# duration of each test
+DURATION="60s"
+
+# function to execute the test
+run_test() {
+    local TEST_TYPE=$1
+    local OPTIONS=$2
+    for i in $(seq 1 $REPEAT); do
+        echo "Esecuzione $i - Test: $TEST_TYPE"
+        mpirun -np 2 -hostfile "$HOSTFILE" stress-ng $OPTIONS --timeout "$DURATION" --metrics-brief \
+            | tee "stress_ng_${TEST_TYPE}_results_${i}.txt"
+        echo "---- Completato: stress_ng_${TEST_TYPE}_results_${i}.txt ----"
+        echo ""
+    done
+}
+
+# CPU: 2 workers per node
+run_test "cpu" "--cpu 2"
+
+# RAM: 1 worker with 1GB per node
+run_test "vm" "--vm 1 --vm-bytes 1G"
+
+# HDD ???
+```
+
+##### sysbench
+
+Basic command
+
+```bash
+mpirun -np 4 -hostfile hosts sysbench --test=cpu --cpu-max-prime=20000 run | tee sysbench_cpu_results.txt
+mpirun -np 4 -hostfile hosts sysbench --test=memory --memory-total-size=10G run | tee sysbench_mem_results.txt
+```
+
+bash script to repeat the experiment multiple times
+
+##### iozone
+
+test the the local filesystem:
+```bash
+iozone -a -R -O | tee iozone_results.txt
+```
+
+test the sared file system
+```bash
+touch /shared/testfile
+nano machines.txt
+```
+
+I modify the file to obtain:
+```
+node01 /shared /usr/bin/iozone 
+node02 /shared /usr/bin/iozone
+```
+
+```bash
+export ssh=rsh
+iozone -+m /shared/machines.txt -f /shared/testfile -a -R -O | tee iozone_shared_results.txt
+```
+
+
+##### iperf
+
+Basic commands
+
+On master node:
+
+```bash
+sudo killall iperf3 
+iperf3 -s | tee iperf3_results.txt
+```
+
+On worker nodes:
+
+```bash
+iperf3 -c cluster01 # TCP test
+iperf3 -c cluster01 -u #UDP test
+iperf3 -c cluster01 -R # Reverse test: the client receives
+```
+
+bash script to repeat the experiment multiple times
+
 
 ## Results and Discussion
+
 ## Conclusion
