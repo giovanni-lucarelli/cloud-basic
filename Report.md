@@ -21,7 +21,11 @@
     - [Starting the Cluster](#starting-the-cluster)
   - [Benchmarking Tools](#benchmarking-tools)
   - [Testing Procedures](#testing-procedures)
-    - [CPU Benchmarking](#cpu-benchmarking)
+    - [HPCC](#hpcc)
+    - [stress-ng](#stress-ng)
+    - [sysbench](#sysbench)
+    - [iozone](#iozone)
+    - [iperf](#iperf)
 - [Results and Discussion](#results-and-discussion)
 - [Conclusion](#conclusion)
 
@@ -441,6 +445,9 @@ volumes:
     driver: local
 ```
 
+>**Note:** there is a slight difference between the cluster configuration in VirtualBox an the one in Docker. In VirtualBox the master node has two network adapters, one for the Internet access and one for the internal network, while in Docker the cluster is built using a single network adapter. The master node has a public IP address (the host machine) and the worker nodes have private IP addresses (the internal network). The shared directory is mounted in each container using a volume.
+This difference however should not affect the performance of the chosen tests.
+
 #### Starting the Cluster
 The cluster is started using the following command:
 
@@ -474,7 +481,7 @@ and analogously for the other nodes.
 ### Benchmarking Tools
 In order to perform the analysis the following tools have been used:
 
-//TODO: write about each benchmarking score and its semantic meaning
+**TODO**: write about each benchmarking score and its semantic meaning
 
 - **CPU benchmarking**: HPC Challenge Benchmark for high-performance computation benchmarking
 - **General System Test**: `stress-ng` and `sysbench` to evaluate CPU and memory performance.
@@ -507,9 +514,7 @@ node02
 node02
 ```
 
-#### CPU Benchmarking
-
-##### HPCC
+#### HPCC
 
 The configuration file for the HPCC:
 
@@ -558,53 +563,74 @@ and the test has been repeated three times using the command:
 mpirun -np 4 -hostfile hosts hpcc
 ```
 
-##### stress-ng
+#### stress-ng
 
 basic stressng command
 
+```bash
+mpirun -np 4 -hostfile hosts stress-ng --cpu 1 --timeout 60s --metrics-brief 2>&1 | tee stress_ng_cpu_x.txt
 ```
-mpirun -np 4 -hostfile hosts stress-ng --cpu 1 --timeout 60s --metrics-brief | tee stress_ng_cpu_results.txt
-mpirun -np 4 -hostfile hosts stress-ng --vm 1 --vm-bytes 1G --timeout 60s --metrics-brief | tee stress_ng_vm_results.txt
-mpirun -np 4 -hostfile hosts stress-ng --hdd 1 --timeout 60s --metrics-brief | tee stress_ng_hdd_results.txt
+```bash
+mpirun -np 4 -hostfile hosts stress-ng --vm 1 --vm-bytes 512M --timeout 60s --metrics-brief 2>&1 | tee stress_ng_vm_x.txt
+```
+
+The test regarding the HDD performance has been performed on the local filesystem:
+
+```bash
+mpirun -np 4 -hostfile hosts \
+  bash -c 'mkdir -p /tmp/stressng && cd /tmp/stressng && stress-ng --hdd 1 --timeout 60s --metrics-brief' \
+  2>&1 | tee stress_ng_hdd_local_results.txt
 ```
 
 advanced stress-ng bash script to repeat the experiment multiple times
 
-```
+```bash
 #!/bin/bash
 
-# File hosts MPI
-HOSTFILE="hosts"
-
-# number of repetitions for each test
+# Number of repetitions
 REPEAT=5
 
-# duration of each test
-DURATION="60s"
+# Hostfile location
+HOSTFILE="hosts"
 
-# function to execute the test
-run_test() {
-    local TEST_TYPE=$1
-    local OPTIONS=$2
-    for i in $(seq 1 $REPEAT); do
-        echo "Esecuzione $i - Test: $TEST_TYPE"
-        mpirun -np 2 -hostfile "$HOSTFILE" stress-ng $OPTIONS --timeout "$DURATION" --metrics-brief \
-            | tee "stress_ng_${TEST_TYPE}_results_${i}.txt"
-        echo "---- Completato: stress_ng_${TEST_TYPE}_results_${i}.txt ----"
-        echo ""
-    done
-}
+# Timeout for each test
+TIMEOUT="60s"
 
-# CPU: 2 workers per node
-run_test "cpu" "--cpu 2"
+# Loop over 5 repetitions
+for i in $(seq 1 $REPEAT); do
+    echo "Running CPU test iteration $i..."
+    mpirun -np 4 -hostfile $HOSTFILE stress-ng --cpu 1 --timeout $TIMEOUT --metrics-brief \
+        2>&1 | tee "stress_ng_cpu_run_${i}.txt"
 
-# RAM: 1 worker with 1GB per node
-run_test "vm" "--vm 1 --vm-bytes 1G"
+    echo "Running VM test iteration $i..."
+    mpirun -np 4 -hostfile $HOSTFILE stress-ng --vm 1 --vm-bytes 512M --timeout $TIMEOUT --metrics-brief \
+        2>&1 | tee "stress_ng_vm_run_${i}.txt"
 
-# HDD ???
+    echo "Running HDD test iteration $i..."
+    mpirun -np 4 -hostfile $HOSTFILE \
+        bash -c "mkdir -p /tmp/stressng && cd /tmp/stressng && stress-ng --hdd 1 --timeout $TIMEOUT --metrics-brief" \
+        2>&1 | tee "stress_ng_hdd_run_${i}.txt"
+    
+    echo "Finished iteration $i"
+    echo "------------------------"
+done
+
+echo "All tests completed."
 ```
 
-##### sysbench
+Save the script to a file, `run_stress_tests.sh`.
+
+Make it executable:
+
+```bash
+chmod +x run_stress_tests.sh
+```
+Run it:
+```bash
+./run_stress_tests.sh
+```
+
+#### sysbench
 
 Basic command
 
@@ -615,7 +641,31 @@ mpirun -np 4 -hostfile hosts sysbench --test=memory --memory-total-size=10G run 
 
 bash script to repeat the experiment multiple times
 
-##### iozone
+```bash
+#!/bin/bash
+
+# Number of iterations
+ITERATIONS=5
+
+# Run CPU test 5 times
+echo "Running CPU test $ITERATIONS times..."
+for i in $(seq 1 $ITERATIONS); do
+    echo "CPU Test Run #$i"
+    mpirun -np 4 -hostfile hosts sysbench --test=cpu --cpu-max-prime=20000 run | tee "sysbench_cpu_result_$i.txt"
+done
+
+# Run Memory test 5 times
+echo "Running Memory test $ITERATIONS times..."
+for i in $(seq 1 $ITERATIONS); do
+    echo "Memory Test Run #$i"
+    mpirun -np 4 -hostfile hosts sysbench --test=memory --memory-total-size=10G run | tee "sysbench_mem_result_$i.txt"
+done
+
+echo "All tests completed."
+
+```
+
+#### iozone
 
 test the the local filesystem:
 ```bash
@@ -623,24 +673,26 @@ iozone -a -R -O | tee iozone_results.txt
 ```
 
 test the sared file system
+
 ```bash
-touch /shared/testfile
+touch /shared/iozone/testfile
 nano machines.txt
 ```
 
-I modify the file to obtain:
+write into the file:
+
 ```
-node01 /shared /usr/bin/iozone 
-node02 /shared /usr/bin/iozone
+node01 /shared/iozone /usr/bin/iozone 
+node02 /shared/iozone /usr/bin/iozone
 ```
 
 ```bash
 export ssh=rsh
-iozone -+m /shared/machines.txt -f /shared/testfile -a -R -O | tee iozone_shared_results.txt
+iozone -+m /shared/iozone/machines.txt -f /shared/iozone/testfile -a -R -O | tee iozone_shared_results.txt
 ```
 
 
-##### iperf
+#### iperf
 
 Basic commands
 
@@ -663,5 +715,9 @@ bash script to repeat the experiment multiple times
 
 
 ## Results and Discussion
+
+
+**TODO**: write about the semantic of each index of the performed tests.
+
 
 ## Conclusion
