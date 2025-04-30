@@ -1,0 +1,2 @@
+node01 /shared/iozone /usr/bin/iozone 
+node02 /shared/iozone /usr/bin/iozone

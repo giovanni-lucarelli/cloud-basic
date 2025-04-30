@@ -1,0 +1,148 @@
+sysbench 1.0.20 (using system LuaJIT 2.1.0-beta3)
+
+Running the test with following options:
+Number of threads: 1
+Initializing random number generator from current time
+
+
+Running memory speed test with the following options:
+  block size: 1KiB
+  total size: 10240MiB
+  operation: write
+  scope: global
+
+Initializing worker threads...
+
+sysbench 1.0.20 (using system LuaJIT 2.1.0-beta3)
+
+Running the test with following options:
+Number of threads: 1
+Initializing random number generator from current time
+
+
+Running memory speed test with the following options:
+  block size: 1KiB
+  total size: 10240MiB
+  operation: write
+  scope: global
+
+Initializing worker threads...
+
+Threads started!
+
+Threads started!
+
+sysbench 1.0.20 (using system LuaJIT 2.1.0-beta3)
+
+Running the test with following options:
+sysbench 1.0.20 (using system LuaJIT 2.1.0-beta3)
+
+Number of threads: 1
+Initializing random number generator from current time
+
+
+Running memory speed test with the following options:
+  block size: 1KiB
+  total size: 10240MiB
+  operation: write
+  scope: global
+
+Initializing worker threads...
+
+Threads started!
+
+Running the test with following options:
+Number of threads: 1
+Initializing random number generator from current time
+
+
+Running memory speed test with the following options:
+  block size: 1KiB
+  total size: 10240MiB
+  operation: write
+  scope: global
+
+Initializing worker threads...
+
+Threads started!
+
+Total operations: 10485760 (5934486.79 per second)
+
+10240.00 MiB transferred (5795.40 MiB/sec)
+
+
+General statistics:
+    total time:                          1.7651s
+    total number of events:              10485760
+
+Latency (ms):
+         min:                                    0.00
+         avg:                                    0.00
+         max:                                    1.09
+         95th percentile:                        0.00
+         sum:                                  823.72
+
+Threads fairness:
+    events (avg/stddev):           10485760.0000/0.00
+    execution time (avg/stddev):   0.8237/0.00
+
+Total operations: 10485760 (5910253.24 per second)
+
+10240.00 MiB transferred (5771.73 MiB/sec)
+
+
+General statistics:
+    total time:                          1.7726s
+    total number of events:              10485760
+
+Latency (ms):
+         min:                                    0.00
+         avg:                                    0.00
+         max:                                    0.97
+         95th percentile:                        0.00
+         sum:                                  826.53
+
+Threads fairness:
+    events (avg/stddev):           10485760.0000/0.00
+    execution time (avg/stddev):   0.8265/0.00
+
+Total operations: 10485760 (5901714.59 per second)
+
+10240.00 MiB transferred (5763.39 MiB/sec)
+
+
+General statistics:
+    total time:                          1.7751s
+    total number of events:              10485760
+
+Latency (ms):
+         min:                                    0.00
+         avg:                                    0.00
+         max:                                    0.88
+         95th percentile:                        0.00
+         sum:                                  826.04
+
+Threads fairness:
+    events (avg/stddev):           10485760.0000/0.00
+    execution time (avg/stddev):   0.8260/0.00
+
+Total operations: 10485760 (5884476.65 per second)
+
+10240.00 MiB transferred (5746.56 MiB/sec)
+
+
+General statistics:
+    total time:                          1.7805s
+    total number of events:              10485760
+
+Latency (ms):
+         min:                                    0.00
+         avg:                                    0.00
+         max:                                    1.70
+         95th percentile:                        0.00
+         sum:                                  827.16
+
+Threads fairness:
+    events (avg/stddev):           10485760.0000/0.00
+    execution time (avg/stddev):   0.8272/0.00
+

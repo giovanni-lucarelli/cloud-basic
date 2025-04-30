@@ -1,0 +1,24 @@
+stress-ng: info:  [1302] setting to a 60 second run per stressor
+stress-ng: info:  [1302] dispatching hogs: 1 vm
+stress-ng: info:  [1321] setting to a 60 second run per stressor
+stress-ng: info:  [1321] dispatching hogs: 1 vm
+stress-ng: info:  [1303] setting to a 60 second run per stressor
+stress-ng: info:  [1303] dispatching hogs: 1 vm
+stress-ng: info:  [1322] setting to a 60 second run per stressor
+stress-ng: info:  [1322] dispatching hogs: 1 vm
+stress-ng: info:  [1321] successful run completed in 60.07s (1 min, 0.07 secs)
+stress-ng: info:  [1321] stressor       bogo ops real time  usr time  sys time   bogo ops/s     bogo ops/s
+stress-ng: info:  [1321]                           (secs)    (secs)    (secs)   (real time) (usr+sys time)
+stress-ng: info:  [1321] vm              2413737     60.07     46.23      9.97     40182.77       42949.06
+stress-ng: info:  [1303] successful run completed in 60.08s (1 min, 0.08 secs)
+stress-ng: info:  [1303] stressor       bogo ops real time  usr time  sys time   bogo ops/s     bogo ops/s
+stress-ng: info:  [1303]                           (secs)    (secs)    (secs)   (real time) (usr+sys time)
+stress-ng: info:  [1303] vm              2404712     60.07     44.19     11.14     40030.53       43461.27
+stress-ng: info:  [1302] successful run completed in 60.08s (1 min, 0.08 secs)
+stress-ng: info:  [1302] stressor       bogo ops real time  usr time  sys time   bogo ops/s     bogo ops/s
+stress-ng: info:  [1302]                           (secs)    (secs)    (secs)   (real time) (usr+sys time)
+stress-ng: info:  [1302] vm              2405224     60.08     45.04     10.17     40034.76       43565.01
+stress-ng: info:  [1322] successful run completed in 61.79s (1 min, 1.79 secs)
+stress-ng: info:  [1322] stressor       bogo ops real time  usr time  sys time   bogo ops/s     bogo ops/s
+stress-ng: info:  [1322]                           (secs)    (secs)    (secs)   (real time) (usr+sys time)
+stress-ng: info:  [1322] vm              2426713     61.79     48.65     10.21     39275.36       41228.56

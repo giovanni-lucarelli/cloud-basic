@@ -1,0 +1,24 @@
+stress-ng: info:  [1894] setting to a 60 second run per stressor
+stress-ng: info:  [1894] dispatching hogs: 1 cpu
+stress-ng: info:  [1895] setting to a 60 second run per stressor
+stress-ng: info:  [1895] dispatching hogs: 1 cpu
+stress-ng: info:  [1793] setting to a 60 second run per stressor
+stress-ng: info:  [1793] dispatching hogs: 1 cpu
+stress-ng: info:  [1792] setting to a 60 second run per stressor
+stress-ng: info:  [1792] dispatching hogs: 1 cpu
+stress-ng: info:  [1894] successful run completed in 60.01s (1 min, 0.01 secs)
+stress-ng: info:  [1894] stressor       bogo ops real time  usr time  sys time   bogo ops/s     bogo ops/s
+stress-ng: info:  [1894]                           (secs)    (secs)    (secs)   (real time) (usr+sys time)
+stress-ng: info:  [1894] cpu               55679     60.00     59.76      0.14       927.95         929.53
+stress-ng: info:  [1792] successful run completed in 60.00s (1 min, 0.00 secs)
+stress-ng: info:  [1792] stressor       bogo ops real time  usr time  sys time   bogo ops/s     bogo ops/s
+stress-ng: info:  [1792]                           (secs)    (secs)    (secs)   (real time) (usr+sys time)
+stress-ng: info:  [1792] cpu               55740     60.00     59.90      0.02       928.97         930.24
+stress-ng: info:  [1793] successful run completed in 60.01s (1 min, 0.01 secs)
+stress-ng: info:  [1793] stressor       bogo ops real time  usr time  sys time   bogo ops/s     bogo ops/s
+stress-ng: info:  [1793]                           (secs)    (secs)    (secs)   (real time) (usr+sys time)
+stress-ng: info:  [1793] cpu               55738     60.01     59.85      0.09       928.81         929.90
+stress-ng: info:  [1895] successful run completed in 60.02s (1 min, 0.02 secs)
+stress-ng: info:  [1895] stressor       bogo ops real time  usr time  sys time   bogo ops/s     bogo ops/s
+stress-ng: info:  [1895]                           (secs)    (secs)    (secs)   (real time) (usr+sys time)
+stress-ng: info:  [1895] cpu               55662     60.02     59.89      0.08       927.41         928.16

@@ -452,7 +452,7 @@ This difference however should not affect the performance of the chosen tests.
 The cluster is started using the following command:
 
 ```{bash}
-docker-compose --build up -d
+docker compose up -d --build
 ```
 This command will build the images and start the containers in detached mode. The containers can be accessed using the following command:
 
@@ -461,6 +461,7 @@ docker exec -it cluster01 bash
 # or
 ssh -p 2220 user01@localhost
 ```
+
 In order to give the user01 the permission to access the shared directory, the following command is used:
 
 ```{bash}
@@ -475,8 +476,19 @@ exit
 ssh node02
 exit
 ```
+this should be done at each restart of the containers.
 
-and analogously for the other nodes.
+To see the running containers:
+
+```bash
+docker ps
+```
+
+to shut down all of them:
+
+```bash
+docker stop $(docker ps -q)
+```
 
 ### Benchmarking Tools
 In order to perform the analysis the following tools have been used:
@@ -516,7 +528,21 @@ node02
 
 #### HPCC
 
-The configuration file for the HPCC:
+to find the location of hpcc
+
+```
+which hpcc
+
+```
+
+and then move to the shared directory:
+
+```
+ cp -r /usr/bin/hpcc /shared/hpcc
+
+```
+
+Then here write the configuration file for the HPCC, namely `hpccinf.txt`:
 
 ```
 HPLinpack benchmark input file
@@ -672,7 +698,7 @@ test the the local filesystem:
 iozone -a -R -O | tee iozone_results.txt
 ```
 
-test the sared file system
+test the shared file system
 
 ```bash
 touch /shared/iozone/testfile
@@ -711,8 +737,12 @@ iperf3 -c cluster01 -u #UDP test
 iperf3 -c cluster01 -R # Reverse test: the client receives
 ```
 
-bash script to repeat the experiment multiple times
 
+in order to copy all the files from the vm to the host machine we can use the `scp` protocol with the command:
+
+```bash
+scp -P 3333 -r user01@127.0.0.1:/shared /path/on/the/local/host
+```
 
 ## Results and Discussion
 

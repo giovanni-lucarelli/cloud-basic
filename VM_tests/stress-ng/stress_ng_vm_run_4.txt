@@ -1,0 +1,24 @@
+stress-ng: info:  [2278] setting to a 60 second run per stressor
+stress-ng: info:  [2278] dispatching hogs: 1 vm
+stress-ng: info:  [2174] setting to a 60 second run per stressor
+stress-ng: info:  [2174] dispatching hogs: 1 vm
+stress-ng: info:  [2279] setting to a 60 second run per stressor
+stress-ng: info:  [2279] dispatching hogs: 1 vm
+stress-ng: info:  [2175] setting to a 60 second run per stressor
+stress-ng: info:  [2175] dispatching hogs: 1 vm
+stress-ng: info:  [2278] successful run completed in 60.07s (1 min, 0.07 secs)
+stress-ng: info:  [2278] stressor       bogo ops real time  usr time  sys time   bogo ops/s     bogo ops/s
+stress-ng: info:  [2278]                           (secs)    (secs)    (secs)   (real time) (usr+sys time)
+stress-ng: info:  [2278] vm              2408753     60.06     46.79     11.15     40103.35       41573.23
+stress-ng: info:  [2175] successful run completed in 60.06s (1 min, 0.06 secs)
+stress-ng: info:  [2175] stressor       bogo ops real time  usr time  sys time   bogo ops/s     bogo ops/s
+stress-ng: info:  [2175]                           (secs)    (secs)    (secs)   (real time) (usr+sys time)
+stress-ng: info:  [2175] vm              2428303     60.06     52.09      7.91     40431.66       40471.72
+stress-ng: info:  [2174] successful run completed in 60.07s (1 min, 0.07 secs)
+stress-ng: info:  [2174] stressor       bogo ops real time  usr time  sys time   bogo ops/s     bogo ops/s
+stress-ng: info:  [2174]                           (secs)    (secs)    (secs)   (real time) (usr+sys time)
+stress-ng: info:  [2174] vm              2412907     60.07     48.34      9.74     40170.93       41544.54
+stress-ng: info:  [2279] successful run completed in 60.07s (1 min, 0.07 secs)
+stress-ng: info:  [2279] stressor       bogo ops real time  usr time  sys time   bogo ops/s     bogo ops/s
+stress-ng: info:  [2279]                           (secs)    (secs)    (secs)   (real time) (usr+sys time)
+stress-ng: info:  [2279] vm              2426564     60.07     51.90      8.03     40397.24       40489.97

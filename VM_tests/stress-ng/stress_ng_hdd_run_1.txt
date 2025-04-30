@@ -1,0 +1,24 @@
+stress-ng: info:  [1399] setting to a 60 second run per stressor
+stress-ng: info:  [1399] dispatching hogs: 1 hdd
+stress-ng: info:  [1430] setting to a 60 second run per stressor
+stress-ng: info:  [1430] dispatching hogs: 1 hdd
+stress-ng: info:  [1431] setting to a 60 second run per stressor
+stress-ng: info:  [1431] dispatching hogs: 1 hdd
+stress-ng: info:  [1400] setting to a 60 second run per stressor
+stress-ng: info:  [1400] dispatching hogs: 1 hdd
+stress-ng: info:  [1430] successful run completed in 60.16s (1 min, 0.16 secs)
+stress-ng: info:  [1430] stressor       bogo ops real time  usr time  sys time   bogo ops/s     bogo ops/s
+stress-ng: info:  [1430]                           (secs)    (secs)    (secs)   (real time) (usr+sys time)
+stress-ng: info:  [1430] hdd               59787     60.16      3.25      5.90       993.88        6534.10
+stress-ng: info:  [1431] successful run completed in 60.16s (1 min, 0.16 secs)
+stress-ng: info:  [1431] stressor       bogo ops real time  usr time  sys time   bogo ops/s     bogo ops/s
+stress-ng: info:  [1431]                           (secs)    (secs)    (secs)   (real time) (usr+sys time)
+stress-ng: info:  [1431] hdd               59659     60.16      3.26      5.91       991.75        6505.89
+stress-ng: info:  [1400] successful run completed in 60.16s (1 min, 0.16 secs)
+stress-ng: info:  [1400] stressor       bogo ops real time  usr time  sys time   bogo ops/s     bogo ops/s
+stress-ng: info:  [1400]                           (secs)    (secs)    (secs)   (real time) (usr+sys time)
+stress-ng: info:  [1400] hdd               58329     60.16      3.48      5.11       969.59        6790.34
+stress-ng: info:  [1399] successful run completed in 60.17s (1 min, 0.17 secs)
+stress-ng: info:  [1399] stressor       bogo ops real time  usr time  sys time   bogo ops/s     bogo ops/s
+stress-ng: info:  [1399]                           (secs)    (secs)    (secs)   (real time) (usr+sys time)
+stress-ng: info:  [1399] hdd               58347     60.17      3.67      5.10       969.69        6653.02

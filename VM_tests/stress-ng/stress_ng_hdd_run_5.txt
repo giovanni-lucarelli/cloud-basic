@@ -1,0 +1,24 @@
+stress-ng: info:  [2970] setting to a 60 second run per stressor
+stress-ng: info:  [2970] dispatching hogs: 1 hdd
+stress-ng: info:  [2669] setting to a 60 second run per stressor
+stress-ng: info:  [2669] dispatching hogs: 1 hdd
+stress-ng: info:  [2971] setting to a 60 second run per stressor
+stress-ng: info:  [2971] dispatching hogs: 1 hdd
+stress-ng: info:  [2670] setting to a 60 second run per stressor
+stress-ng: info:  [2670] dispatching hogs: 1 hdd
+stress-ng: info:  [2970] successful run completed in 60.06s (1 min, 0.06 secs)
+stress-ng: info:  [2970] stressor       bogo ops real time  usr time  sys time   bogo ops/s     bogo ops/s
+stress-ng: info:  [2970]                           (secs)    (secs)    (secs)   (real time) (usr+sys time)
+stress-ng: info:  [2970] hdd               65536     60.06      3.74      4.96      1091.20        7532.87
+stress-ng: info:  [2971] successful run completed in 60.07s (1 min, 0.07 secs)
+stress-ng: info:  [2971] stressor       bogo ops real time  usr time  sys time   bogo ops/s     bogo ops/s
+stress-ng: info:  [2971]                           (secs)    (secs)    (secs)   (real time) (usr+sys time)
+stress-ng: info:  [2971] hdd               65536     60.07      3.62      4.92      1091.01        7674.00
+stress-ng: info:  [2669] successful run completed in 60.09s (1 min, 0.09 secs)
+stress-ng: info:  [2669] stressor       bogo ops real time  usr time  sys time   bogo ops/s     bogo ops/s
+stress-ng: info:  [2669]                           (secs)    (secs)    (secs)   (real time) (usr+sys time)
+stress-ng: info:  [2669] hdd               63685     60.08      2.85      5.73      1059.93        7422.49
+stress-ng: info:  [2670] successful run completed in 60.08s (1 min, 0.08 secs)
+stress-ng: info:  [2670] stressor       bogo ops real time  usr time  sys time   bogo ops/s     bogo ops/s
+stress-ng: info:  [2670]                           (secs)    (secs)    (secs)   (real time) (usr+sys time)
+stress-ng: info:  [2670] hdd               63263     60.08      2.95      5.55      1052.94        7442.71
