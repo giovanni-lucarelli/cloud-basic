@@ -1,0 +1,44 @@
+stress-ng: info:  [254] setting to a 1 min, 0 secs run per stressor
+stress-ng: info:  [255] setting to a 1 min, 0 secs run per stressor
+stress-ng: info:  [255] setting to a 1 min, 0 secs run per stressor
+stress-ng: info:  [256] setting to a 1 min, 0 secs run per stressor
+stress-ng: info:  [254] dispatching hogs: 1 cpu
+stress-ng: info:  [255] dispatching hogs: 1 cpu
+stress-ng: info:  [254] note: 8 cpus have scaling governors set to powersave and this can impact on performance; setting /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor to 'performance' may improve performance
+stress-ng: info:  [255] note: 8 cpus have scaling governors set to powersave and this can impact on performance; setting /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor to 'performance' may improve performance
+stress-ng: info:  [255] dispatching hogs: 1 cpu
+stress-ng: info:  [256] dispatching hogs: 1 cpu
+stress-ng: info:  [255] note: 8 cpus have scaling governors set to powersave and this can impact on performance; setting /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor to 'performance' may improve performance
+stress-ng: info:  [256] note: 8 cpus have scaling governors set to powersave and this can impact on performance; setting /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor to 'performance' may improve performance
+stress-ng: metrc: [255] stressor       bogo ops real time  usr time  sys time   bogo ops/s     bogo ops/s
+stress-ng: metrc: [255]                           (secs)    (secs)    (secs)   (real time) (usr+sys time)
+stress-ng: metrc: [255] cpu               80226     60.00     59.95      0.00      1337.09        1338.26
+stress-ng: info:  [255] skipped: 0
+stress-ng: info:  [255] passed: 1: cpu (1)
+stress-ng: info:  [255] failed: 0
+stress-ng: info:  [255] metrics untrustworthy: 0
+stress-ng: info:  [255] successful run completed in 1 min, 0.00 secs
+stress-ng: metrc: [254] stressor       bogo ops real time  usr time  sys time   bogo ops/s     bogo ops/s
+stress-ng: metrc: [254]                           (secs)    (secs)    (secs)   (real time) (usr+sys time)
+stress-ng: metrc: [254] cpu               80879     60.00     59.94      0.00      1347.95        1349.37
+stress-ng: info:  [254] skipped: 0
+stress-ng: info:  [254] passed: 1: cpu (1)
+stress-ng: info:  [254] failed: 0
+stress-ng: info:  [254] metrics untrustworthy: 0
+stress-ng: info:  [254] successful run completed in 1 min, 0.00 secs
+stress-ng: metrc: [256] stressor       bogo ops real time  usr time  sys time   bogo ops/s     bogo ops/s
+stress-ng: metrc: [256]                           (secs)    (secs)    (secs)   (real time) (usr+sys time)
+stress-ng: metrc: [256] cpu               81251     60.00     59.95      0.00      1354.15        1355.35
+stress-ng: info:  [256] skipped: 0
+stress-ng: info:  [256] passed: 1: cpu (1)
+stress-ng: info:  [256] failed: 0
+stress-ng: info:  [256] metrics untrustworthy: 0
+stress-ng: info:  [256] successful run completed in 1 min, 0.01 secs
+stress-ng: metrc: [255] stressor       bogo ops real time  usr time  sys time   bogo ops/s     bogo ops/s
+stress-ng: metrc: [255]                           (secs)    (secs)    (secs)   (real time) (usr+sys time)
+stress-ng: metrc: [255] cpu               79882     60.00     59.95      0.00      1331.31        1332.40
+stress-ng: info:  [255] skipped: 0
+stress-ng: info:  [255] passed: 1: cpu (1)
+stress-ng: info:  [255] failed: 0
+stress-ng: info:  [255] metrics untrustworthy: 0
+stress-ng: info:  [255] successful run completed in 1 min, 0.01 secs

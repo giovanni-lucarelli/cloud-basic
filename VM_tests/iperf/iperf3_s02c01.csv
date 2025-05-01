@@ -1,0 +1,38 @@
+Format,Interval,Transfer,Bitrate
+standard,5],0.00-1.00,sec,205 MBytes,1.72 Gbits/sec
+standard,5],1.00-2.00,sec,263 MBytes,2.20 Gbits/sec
+standard,5],2.00-3.00,sec,230 MBytes,1.93 Gbits/sec
+standard,5],3.00-4.00,sec,243 MBytes,2.04 Gbits/sec
+standard,5],4.00-5.00,sec,233 MBytes,1.95 Gbits/sec
+standard,5],5.00-6.00,sec,252 MBytes,2.11 Gbits/sec
+standard,5],6.00-7.00,sec,257 MBytes,2.16 Gbits/sec
+standard,5],7.00-8.00,sec,264 MBytes,2.21 Gbits/sec
+standard,5],8.00-9.00,sec,250 MBytes,2.10 Gbits/sec
+standard,5],9.00-10.00,sec,213 MBytes,1.79 Gbits/sec
+standard,5],10.00-10.00,sec,259 KBytes,1.99 Gbits/sec
+Format,Interval,Transfer,Bitrate
+Format,Interval,Transfer,Bitrate,Jitter,Lost/Total Datagrams
+udp,5],0.00-1.01,sec,130 KBytes,1.06 Mbits/sec,0.067 ms,0/92 (0%)
+udp,5],1.01-2.00,sec,127 KBytes,1.05 Mbits/sec,0.103 ms,0/90 (0%)
+udp,5],2.00-3.01,sec,129 KBytes,1.05 Mbits/sec,0.054 ms,0/91 (0%)
+udp,5],3.01-4.00,sec,126 KBytes,1.04 Mbits/sec,0.096 ms,0/89 (0%)
+udp,5],4.00-5.00,sec,129 KBytes,1.05 Mbits/sec,0.108 ms,0/91 (0%)
+udp,5],5.00-6.00,sec,129 KBytes,1.05 Mbits/sec,0.102 ms,0/91 (0%)
+udp,5],6.00-7.00,sec,127 KBytes,1.04 Mbits/sec,0.090 ms,0/90 (0%)
+udp,5],7.00-8.00,sec,129 KBytes,1.06 Mbits/sec,0.103 ms,0/91 (0%)
+udp,5],8.00-9.04,sec,119 KBytes,939 Kbits/sec,0.093 ms,0/84 (0%)
+udp,5],9.04-10.00,sec,137 KBytes,1.17 Mbits/sec,0.310 ms,0/97 (0%)
+Format,Interval,Transfer,Bitrate,Jitter,Lost/Total Datagrams
+Format,Interval,Transfer,Bitrate,Retr,Cwnd
+retrans,5],0.00-1.00,sec,183 MBytes,1.54 Gbits/sec,1080,238 KBytes
+retrans,5],1.00-2.00,sec,251 MBytes,2.10 Gbits/sec,2025,228 KBytes
+retrans,5],2.00-3.00,sec,255 MBytes,2.14 Gbits/sec,1530,212 KBytes
+retrans,5],3.00-4.00,sec,253 MBytes,2.12 Gbits/sec,1395,185 KBytes
+retrans,5],4.00-5.00,sec,275 MBytes,2.31 Gbits/sec,1696,212 KBytes
+retrans,5],5.00-6.00,sec,248 MBytes,2.08 Gbits/sec,1763,202 KBytes
+retrans,5],6.00-7.00,sec,250 MBytes,2.10 Gbits/sec,1440,262 KBytes
+retrans,5],7.00-8.00,sec,265 MBytes,2.22 Gbits/sec,1380,240 KBytes
+retrans,5],8.00-9.00,sec,244 MBytes,2.05 Gbits/sec,1440,219 KBytes
+retrans,5],9.00-10.00,sec,231 MBytes,1.94 Gbits/sec,1485,215 KBytes
+retrans,5],10.00-10.00,sec,1.06 MBytes,10.1 Gbits/sec,0,215 KBytes
+Format,Interval,Transfer,Bitrate,Retr,Cwnd

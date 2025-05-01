@@ -1,0 +1,44 @@
+stress-ng: info:  [9758] setting to a 1 min, 0 secs run per stressor
+stress-ng: info:  [9759] setting to a 1 min, 0 secs run per stressor
+stress-ng: info:  [9760] setting to a 1 min, 0 secs run per stressor
+stress-ng: info:  [9761] setting to a 1 min, 0 secs run per stressor
+stress-ng: info:  [9758] dispatching hogs: 1 vm
+stress-ng: info:  [9758] note: 8 cpus have scaling governors set to powersave and this can impact on performance; setting /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor to 'performance' may improve performance
+stress-ng: info:  [9759] dispatching hogs: 1 vm
+stress-ng: info:  [9759] note: 8 cpus have scaling governors set to powersave and this can impact on performance; setting /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor to 'performance' may improve performance
+stress-ng: info:  [9760] dispatching hogs: 1 vm
+stress-ng: info:  [9760] note: 8 cpus have scaling governors set to powersave and this can impact on performance; setting /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor to 'performance' may improve performance
+stress-ng: info:  [9761] dispatching hogs: 1 vm
+stress-ng: info:  [9761] note: 8 cpus have scaling governors set to powersave and this can impact on performance; setting /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor to 'performance' may improve performance
+stress-ng: metrc: [9758] stressor       bogo ops real time  usr time  sys time   bogo ops/s     bogo ops/s
+stress-ng: metrc: [9758]                           (secs)    (secs)    (secs)   (real time) (usr+sys time)
+stress-ng: metrc: [9758] vm              2868087     60.04     33.81      8.93     47772.11       67100.66
+stress-ng: info:  [9758] skipped: 0
+stress-ng: info:  [9758] passed: 1: vm (1)
+stress-ng: info:  [9758] failed: 0
+stress-ng: info:  [9758] metrics untrustworthy: 0
+stress-ng: info:  [9758] successful run completed in 1 min, 0.04 secs
+stress-ng: metrc: [9761] stressor       bogo ops real time  usr time  sys time   bogo ops/s     bogo ops/s
+stress-ng: metrc: [9761]                           (secs)    (secs)    (secs)   (real time) (usr+sys time)
+stress-ng: metrc: [9761] vm              3221407     60.05     41.46     10.91     53649.85       61520.15
+stress-ng: info:  [9761] skipped: 0
+stress-ng: info:  [9761] passed: 1: vm (1)
+stress-ng: info:  [9761] failed: 0
+stress-ng: info:  [9761] metrics untrustworthy: 0
+stress-ng: info:  [9761] successful run completed in 1 min, 0.05 secs
+stress-ng: metrc: [9759] stressor       bogo ops real time  usr time  sys time   bogo ops/s     bogo ops/s
+stress-ng: metrc: [9759]                           (secs)    (secs)    (secs)   (real time) (usr+sys time)
+stress-ng: metrc: [9759] vm              3225739     60.30     40.48     11.19     53498.55       62420.18
+stress-ng: info:  [9759] skipped: 0
+stress-ng: info:  [9759] passed: 1: vm (1)
+stress-ng: info:  [9759] failed: 0
+stress-ng: info:  [9759] metrics untrustworthy: 0
+stress-ng: info:  [9759] successful run completed in 1 min, 0.30 secs
+stress-ng: metrc: [9760] stressor       bogo ops real time  usr time  sys time   bogo ops/s     bogo ops/s
+stress-ng: metrc: [9760]                           (secs)    (secs)    (secs)   (real time) (usr+sys time)
+stress-ng: metrc: [9760] vm              3492223     60.48     43.17     11.21     57742.72       64225.16
+stress-ng: info:  [9760] skipped: 0
+stress-ng: info:  [9760] passed: 1: vm (1)
+stress-ng: info:  [9760] failed: 0
+stress-ng: info:  [9760] metrics untrustworthy: 0
+stress-ng: info:  [9760] successful run completed in 1 min, 0.48 secs
