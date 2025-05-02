@@ -28,6 +28,16 @@
     - [iperf](#iperf)
 - [Results and Discussion](#results-and-discussion)
   - [HPCC](#hpcc-1)
+    - [Compute performance](#compute-performance)
+    - [Memory and Bandwidth](#memory-and-bandwidth)
+    - [Comunication (latency and bandwidth)](#comunication-latency-and-bandwidth)
+  - [stress-ng](#stress-ng-1)
+    - [CPU](#cpu)
+    - [Memory](#memory)
+    - [HDD](#hdd)
+  - [sysbench](#sysbench-1)
+    - [CPU](#cpu-1)
+    - [Memory](#memory-1)
 - [Conclusion](#conclusion)
 
 ## Introduction
@@ -754,73 +764,129 @@ The full resoults for each test can be found in the folder [results](https://git
 
 ### HPCC
 
-The hpcc test has been repeated three times for each support; here hare reported the main results:
+The hpcc test has been repeated three times for each support; here hare reported the mean value for the main benchmarks, divided by type of metrics:
 
+#### Compute performance
 
-| Metric                                | VM          | Container   | Host        |
-|---------------------------------------|-------------|-------------|-------------|
-| **HPL_Gflops**                        | 5.12834     | 5.55205     | 5.51585  |
-| **StarDGEMM_Gflops**                  | 1.289923333 | 1.303136667 | 1.400136667 |
-| **SingleDGEMM_Gflops**                | 1.907263333 | 2.081343333 | 2.054483333 |
-| **PTRANS_GBs**                        | 0.1957013333| 1.181326333 | 1.49452     |
-| **MPIRandomAccess_LCG_GUPs**          | 0.00224597  | 0.00263638  | 0.03425423333 |
-| **MPIRandomAccess_GUPs**              | 0.002285113333 | 0.00259612 | 0.03158203333 |
-| **StarRandomAccess_LCG_GUPs**         | 0.005708726667 | 0.01385466667 | 0.0142893 |
-| **SingleRandomAccess_LCG_GUPs**       | 0.0238164   | 0.04192046667 | 0.04740266667 |
-| **StarRandomAccess_GUPs**             | 0.005535296667 | 0.013226 | 0.01321266667 |
-| **SingleRandomAccess_GUPs**           | 0.02555676667 | 0.04471336667 | 0.04688606667 |
-| **StarSTREAM_Copy**                   | 5.033903333 | 5.406483333 | 5.388746667 |
-| **StarSTREAM_Scale**                  | 3.342773333 | 3.553516667 | 3.56048     |
-| **StarSTREAM_Add**                    | 3.7531      | 4.075676667 | 4.070386667 |
-| **StarSTREAM_Triad**                  | 3.722076667 | 4.022163333 | 3.99982     |
-| **SingleSTREAM_Copy**                 | 22.29853333 | 24.10956667 | 23.4441     |
-| **SingleSTREAM_Scale**                | 13.26136667 | 14.2313     | 14.05846667 |
-| **SingleSTREAM_Add**                  | 14.39833333 | 15.3801     | 15.06273333 |
-| **SingleSTREAM_Triad**                | 14.43553333 | 15.47583333 | 15.21756667 |
-| **StarFFT_Gflops**                    | 1.45319     | 1.832423333 | 1.816386667 |
-| **SingleFFT_Gflops**                  | 2.63849     | 2.76676     | 2.739163333 |
-| **MPIFFT_Gflops**                     | 1.230823333 | 3.672603333 | 4.04231     |
-| **RandomlyOrderedRingBandwidth_GBytes** | 0.1197933333 | 1.857003333 | 2.970566667 |
-| **RandomlyOrderedRingLatency_usec**   | 63.77093333 | 6.87155     | 0.2301086667 |
-| **NaturallyOrderedRingBandwidth_GBytes** | 0.145474 | 2.063596667 | 3.10071     |
-| **NaturallyOrderedRingLatency_usec**  | 61.4261     | 5.926133333 | 0.2273406667 |
-| **MaxPingPongBandwidth_GBytes**       | 11.38297667 | 13.72573333 | 13.90836667 |
-| **AvgPingPongBandwidth_GBytes**       | 3.61683     | 7.94335     | 12.7499     |
-| **MinPingPongBandwidth_GBytes**       | 0.2303303333 | 4.995496667 | 11.51686667 |
-| **MaxPingPongLatency_usec**           | 75.6509     | 9.961636667 | 0.2178026667 |
-| **AvgPingPongLatency_usec**           | 49.02626667 | 6.855053333 | 0.2110613333 |
-| **MinPingPongLatency_usec**           | 1.957333333 | 1.852813333 | 0.2007283333 |
+| Benchmark                                 | VM (Gflops)          | Container (Gflops)   | Host (Gflops)        |
+|--------------------------------------|--------------|--------------|--------------|
+| HPL                       | 5.12834      | 5.55205      | 5.51585      |
+| Star DGEMM                | 1.28992      | 1.30314      | 1.40014      |
+| Single DGEMM                | 1.90726      | 2.08134      | 2.05448      |
+| Star FFT                    | 1.45319      | 1.83242      | 1.81639      |
+| Single FFT                    | 2.63849      | 2.76676      | 2.73916      |
+| MPI FFT                       | 1.23082      | 3.67260      | 4.04231      |
 
+![alt text](/assets/hpcc_compute_performance.png)
 
-
-Category	Best Performer	Key Insight
 HPL (Tflops)	Container	Host close behind; VM lags ~8%
 DGEMM (Gflops)	Host (Single/Star)	Host leads in both Star and Single
-PTRANS (GB/s)	Host	Huge performance difference: VM ~0.2 vs Host ~1.5 GB/s
-RandomAccess (GUPs)	Host	Especially in MPIRandomAccess: ~0.03 on host vs ~0.002 on VM
-STREAM (GB/s)	Host ≈ Container	Host and container close; VM clearly slower
 FFT (Gflops)	Host	MPIFFT is 4.0 on Host vs 1.2 on VM
-Ring Bandwidth (GB/s)	Host	Host is ~2.5–3× faster
-Ring Latency (usec)	Host	Orders of magnitude lower: ~0.23 µs vs 60+ µs on VM
-PingPong Bandwidth	Host	13.9 GB/s (Max) vs 11.4 GB/s on VM
-PingPong Latency	Host	~0.2 µs vs ~75 µs (Max) on VM
 
-Most Important Results
-Communication Latency: VM introduces massive latency penalties (~300× higher), which will severely degrade performance for latency-sensitive HPC applications.
-
-Memory Bandwidth (STREAM, PTRANS): Host and container perform similarly, with VM being the weakest.
 
 Compute Performance (HPL, DGEMM, FFT): Host consistently leads or ties with container; VM trails behind in most metrics.
 
+#### Memory and Bandwidth
+| Benchmark                                 | VM (GB/s)           | Container (GB/s)    | Host (GB/s)         |
+|--------------------------------------|--------------|--------------|--------------|
+| StarSTREAM_Copy              | 5.03390      | 5.40648      | 5.38875      |
+| StarSTREAM_Scale                    | 3.34277      | 3.55352      | 3.56048      |
+| StarSTREAM_Add                      | 3.75310      | 4.07568      | 4.07039      |
+| StarSTREAM_Triad                    | 3.72208      | 4.02216      | 3.99982      |
+| SingleSTREAM_Copy                   | 22.29853     | 24.10957     | 23.44410     |
+| SingleSTREAM_Scale                  | 13.26137     | 14.23130     | 14.05847     |
+| SingleSTREAM_Add                    | 14.39833     | 15.38010     | 15.06273     |
+| SingleSTREAM_Triad                  | 14.43553     | 15.47583     | 15.21757     |
+| PTRANS                        | 0.19570      | 1.18133      | 1.49452      |
+
+![error](/assets/hpcc_stream_performance.png)
+
+
+| Benchmark                                 | VM (GUPs)           | Container (GUPs)    | Host (GUPs)         |
+|--------------------------------------|--------------|--------------|--------------|
+| MPIRandomAccess_LCG            | 0.00225      | 0.00264      | 0.03425      |
+| MPIRandomAccess                | 0.00229      | 0.00260      | 0.03158      |
+| StarRandomAccess_LCG           | 0.00571      | 0.01385      | 0.01429      |
+| SingleRandomAccess_LCG         | 0.02382      | 0.04192      | 0.04740      |
+| StarRandomAccess               | 0.00554      | 0.01323      | 0.01321      |
+| SingleRandomAccess             | 0.02556      | 0.04471      | 0.04689      |
+
+![error](/assets/hpcc_random_access_performance.png)
+
+PTRANS (GB/s)	Host	Huge performance difference: VM ~0.2 vs Host ~1.5 GB/s
+RandomAccess (GUPs)	Host	Especially in MPIRandomAccess: ~0.03 on host vs ~0.002 on VM
+STREAM (GB/s)	Host ≈ Container	Host and container close; VM clearly slower
+
+Memory Bandwidth (STREAM, PTRANS): Host and container perform similarly, with VM being the weakest.
+
 Random Access: Host handles irregular access much better — a sign of superior memory and cache handling.
 
-Conclusion
-Bare Metal (Host) delivers the best overall performance across all categories.
+#### Comunication (latency and bandwidth)
 
-Container has very close performance to host, especially in compute- and memory-bound tasks.
+| Metric                                 | VM (GB/s)          | Container (GB/s)    | Host (GB/s)        |
+|--------------------------------------|--------------|--------------|--------------|
+| RandomlyOrderedRingBandwidth| 0.11979      | 1.85700      | 2.97057      |
+| NaturallyOrderedRingBandwidth| 0.14547      | 2.06360      | 3.10071      |
+| MaxPingPongBandwidth         | 11.38298     | 13.72573     | 13.90837     |
+| AvgPingPongBandwidth         | 3.61683      | 7.94335      | 12.74990     |
+| MinPingPongBandwidth         | 0.23033      | 4.99550      | 11.51687     |
 
-VM significantly degrades communication and memory-intensive operations, making it a poor choice for high-performance workloads.
 
+![bandwidth](/assets/hpcc_bandwidth_performance.png)
+
+| Metric                                 | VM (µs)           | Container (µs)    | Host (µs)          |
+|--------------------------------------|--------------|--------------|--------------|
+| RandomlyOrderedRingLatency     | 63.77093     | 6.87155      | 0.23011      |
+| NaturallyOrderedRingLatency   | 61.42610     | 5.92613      | 0.22734      |
+| MaxPingPongLatency             | 75.65090     | 9.96164      | 0.21780      |
+| AvgPingPongLatency             | 49.02627     | 6.85505      | 0.21106      |
+| MinPingPongLatency             | 1.95733      | 1.85281      | 0.20073      |
+
+
+![latency](/assets/hpcc_latency_performance.png)
+
+
+Ring Bandwidth (GB/s)	Host	Host is ~2.5–3× faster
+Ring Latency (usec)	Host	Orders of magnitude lower: ~0.23 µs vs 60+ µs on VM
+PingPong Bandwidth	Host	13.9 GB/s (Max) vs 11.4 GB/s on VM
+
+Communication Latency: VM introduces massive latency penalties (~300× higher), which will severely degrade performance for latency-sensitive HPC applications.
+
+### stress-ng
+
+#### CPU
+
+| Metric | VM | Container | Host |
+|---|---|---|---|
+ Bogo Ops/s (real time)| 924.9545 $\pm$ 8.09289 | 1340.9215 $\pm$ 13.4437 | 1348.9825 $\pm$ 16.1727 |
+Bogo Ops/s (usr + sys time)| 926.1925 $\pm$ 7.9043 | 1342.236 $\pm$ 13.451 | 1349.2445 $\pm$ 16.1921|
+
+![stress-ng-cpu](/assets/stressng_cpu_performance.png)
+
+#### Memory
+
+| Metric | VM | Container | Host |
+|---|---|---|---|
+ Bogo Ops/s (real time)| 40182.6865 $\pm$ 265.4174647859875 | 52180.350000000006 $\pm$ 5024.639648701774 | 53899.87176470588 $\pm$ 4947.8459978954925 |
+Bogo Ops/s (usr + sys time)| 41433.749500000005 $\pm$ 951.507057116153 | 66543.32166666666 $\pm$ 2954.414005484496 | 62686.96647058823 $\pm$ 3254.2196240053877 |
+
+![stress-ng-memory](/assets/stressng_memory_performance.png)
+
+#### HDD
+
+| Metric | VM | Container | Host |
+|---|---|---|---|
+ Bogo Ops/s (real time)| 1080.4014999999997 $\pm$ 60.999059205428445 | 674.6494999999999 $\pm$ 60.19301275021355| 776.254 $\pm$ 60.63222622370141 |
+Bogo Ops/s (usr + sys time)| 7338.567499999999 $\pm$ 768.3790180898939 | 5252.8375 $\pm$ 562.5281471869932 | 5287.1255 $\pm$ 332.04750214191387 |
+
+![stress-ng-hdd](/assets/stressng_hdd_performance.png)
+
+### sysbench
+
+#### CPU
+
+
+#### Memory
 
 
 ## Conclusion
