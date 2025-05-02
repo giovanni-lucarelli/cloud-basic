@@ -749,5 +749,7 @@ scp -P 3333 -r user01@127.0.0.1:/shared /path/on/the/local/host
 
 **TODO**: write about the semantic of each index of the performed tests.
 
+The full resoults for each test can be found in the folders: [vm_tests]()
+
 
 ## Conclusion
