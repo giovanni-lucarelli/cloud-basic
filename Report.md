@@ -27,6 +27,7 @@
     - [iozone](#iozone)
     - [iperf](#iperf)
 - [Results and Discussion](#results-and-discussion)
+  - [HPCC](#hpcc-1)
 - [Conclusion](#conclusion)
 
 ## Introduction
@@ -749,7 +750,77 @@ scp -P 3333 -r user01@127.0.0.1:/shared /path/on/the/local/host
 
 **TODO**: write about the semantic of each index of the performed tests.
 
-The full resoults for each test can be found in the folders: [vm_tests]()
+The full resoults for each test can be found in the folder [results](https://github.com/giovanni-lucarelli/cloud-basic/tree/main/results) in my github repository. Here are briefly discussed only the main ones.
+
+### HPCC
+
+The hpcc test has been repeated three times for each support; here hare reported the main results:
+
+
+| Metric                                | VM          | Container   | Host        |
+|---------------------------------------|-------------|-------------|-------------|
+| **HPL_Gflops**                        | 5.12834     | 5.55205     | 5.51585  |
+| **StarDGEMM_Gflops**                  | 1.289923333 | 1.303136667 | 1.400136667 |
+| **SingleDGEMM_Gflops**                | 1.907263333 | 2.081343333 | 2.054483333 |
+| **PTRANS_GBs**                        | 0.1957013333| 1.181326333 | 1.49452     |
+| **MPIRandomAccess_LCG_GUPs**          | 0.00224597  | 0.00263638  | 0.03425423333 |
+| **MPIRandomAccess_GUPs**              | 0.002285113333 | 0.00259612 | 0.03158203333 |
+| **StarRandomAccess_LCG_GUPs**         | 0.005708726667 | 0.01385466667 | 0.0142893 |
+| **SingleRandomAccess_LCG_GUPs**       | 0.0238164   | 0.04192046667 | 0.04740266667 |
+| **StarRandomAccess_GUPs**             | 0.005535296667 | 0.013226 | 0.01321266667 |
+| **SingleRandomAccess_GUPs**           | 0.02555676667 | 0.04471336667 | 0.04688606667 |
+| **StarSTREAM_Copy**                   | 5.033903333 | 5.406483333 | 5.388746667 |
+| **StarSTREAM_Scale**                  | 3.342773333 | 3.553516667 | 3.56048     |
+| **StarSTREAM_Add**                    | 3.7531      | 4.075676667 | 4.070386667 |
+| **StarSTREAM_Triad**                  | 3.722076667 | 4.022163333 | 3.99982     |
+| **SingleSTREAM_Copy**                 | 22.29853333 | 24.10956667 | 23.4441     |
+| **SingleSTREAM_Scale**                | 13.26136667 | 14.2313     | 14.05846667 |
+| **SingleSTREAM_Add**                  | 14.39833333 | 15.3801     | 15.06273333 |
+| **SingleSTREAM_Triad**                | 14.43553333 | 15.47583333 | 15.21756667 |
+| **StarFFT_Gflops**                    | 1.45319     | 1.832423333 | 1.816386667 |
+| **SingleFFT_Gflops**                  | 2.63849     | 2.76676     | 2.739163333 |
+| **MPIFFT_Gflops**                     | 1.230823333 | 3.672603333 | 4.04231     |
+| **RandomlyOrderedRingBandwidth_GBytes** | 0.1197933333 | 1.857003333 | 2.970566667 |
+| **RandomlyOrderedRingLatency_usec**   | 63.77093333 | 6.87155     | 0.2301086667 |
+| **NaturallyOrderedRingBandwidth_GBytes** | 0.145474 | 2.063596667 | 3.10071     |
+| **NaturallyOrderedRingLatency_usec**  | 61.4261     | 5.926133333 | 0.2273406667 |
+| **MaxPingPongBandwidth_GBytes**       | 11.38297667 | 13.72573333 | 13.90836667 |
+| **AvgPingPongBandwidth_GBytes**       | 3.61683     | 7.94335     | 12.7499     |
+| **MinPingPongBandwidth_GBytes**       | 0.2303303333 | 4.995496667 | 11.51686667 |
+| **MaxPingPongLatency_usec**           | 75.6509     | 9.961636667 | 0.2178026667 |
+| **AvgPingPongLatency_usec**           | 49.02626667 | 6.855053333 | 0.2110613333 |
+| **MinPingPongLatency_usec**           | 1.957333333 | 1.852813333 | 0.2007283333 |
+
+
+
+Category	Best Performer	Key Insight
+HPL (Tflops)	Container	Host close behind; VM lags ~8%
+DGEMM (Gflops)	Host (Single/Star)	Host leads in both Star and Single
+PTRANS (GB/s)	Host	Huge performance difference: VM ~0.2 vs Host ~1.5 GB/s
+RandomAccess (GUPs)	Host	Especially in MPIRandomAccess: ~0.03 on host vs ~0.002 on VM
+STREAM (GB/s)	Host ≈ Container	Host and container close; VM clearly slower
+FFT (Gflops)	Host	MPIFFT is 4.0 on Host vs 1.2 on VM
+Ring Bandwidth (GB/s)	Host	Host is ~2.5–3× faster
+Ring Latency (usec)	Host	Orders of magnitude lower: ~0.23 µs vs 60+ µs on VM
+PingPong Bandwidth	Host	13.9 GB/s (Max) vs 11.4 GB/s on VM
+PingPong Latency	Host	~0.2 µs vs ~75 µs (Max) on VM
+
+Most Important Results
+Communication Latency: VM introduces massive latency penalties (~300× higher), which will severely degrade performance for latency-sensitive HPC applications.
+
+Memory Bandwidth (STREAM, PTRANS): Host and container perform similarly, with VM being the weakest.
+
+Compute Performance (HPL, DGEMM, FFT): Host consistently leads or ties with container; VM trails behind in most metrics.
+
+Random Access: Host handles irregular access much better — a sign of superior memory and cache handling.
+
+Conclusion
+Bare Metal (Host) delivers the best overall performance across all categories.
+
+Container has very close performance to host, especially in compute- and memory-bound tasks.
+
+VM significantly degrades communication and memory-intensive operations, making it a poor choice for high-performance workloads.
+
 
 
 ## Conclusion
