@@ -36,8 +36,10 @@
     - [Memory](#memory)
     - [HDD](#hdd)
   - [sysbench](#sysbench-1)
-    - [CPU](#cpu-1)
-    - [Memory](#memory-1)
+    - [CPU Performance Metrics (Mean ± Standard Deviation)](#cpu-performance-metrics-mean--standard-deviation)
+    - [Memory Performance Metrics (Mean ± Standard Deviation)](#memory-performance-metrics-mean--standard-deviation)
+  - [iperf](#iperf-1)
+  - [iozone](#iozone-1)
 - [Conclusion](#conclusion)
 
 ## Introduction
@@ -883,10 +885,38 @@ Bogo Ops/s (usr + sys time)| 7338.567499999999 $\pm$ 768.3790180898939 | 5252.83
 
 ### sysbench
 
-#### CPU
+
+#### CPU Performance Metrics (Mean ± Standard Deviation)
+
+| Metric           | VM                        | Container                  | Host                       |
+|------------------|---------------------------|----------------------------|----------------------------|
+| Events/sec       | 453.9747 ± 1.2761         | 459.7389 ± 2.5427          | 452.3815 ± 6.7584          |
+| Latency Min (ms) | 2.0418 ± 0.0124           | 2.0311 ± 0.0047            | 2.0510 ± 0.0159            |
+| Latency Avg (ms) | 2.2029 ± 0.0069           | 2.1739 ± 0.0114            | 2.2105 ± 0.0332            |
+| Latency Max (ms) | 6.0506 ± 1.1815           | 6.1450 ± 2.7280            | 5.4925 ± 1.5554            |
+
+![sysbench-cpu](/assets/sysbench_cpu_events_per_sec.png)
+![sysbench-cpu](/assets/sysbench_cpu_latency_avg.png)
 
 
-#### Memory
+#### Memory Performance Metrics (Mean ± Standard Deviation)
+
+| Metric               | VM                          | Container                   | Host                        |
+|----------------------|-----------------------------|-----------------------------|-----------------------------|
+| Ops/sec              | 4.0726e+06 ± 2.4459e+04      | 5.7807e+06 ± 9.8893e+04      | 5.4453e+06 ± 8.2058e+04      |
+| Transfer Rate (MiB/s)| 3977.1740 ± 23.8870         | 5645.2060 ± 96.5748         | 5317.7080 ± 80.1345         |
+| Total Time (s)       | 2.5732 ± 0.0155             | 1.8126 ± 0.0307             | 1.9243 ± 0.0295             |
+| Latency Avg (ms)     | 0.0000 ± 0.0000             | 0.0000 ± 0.0000             | 0.0000 ± 0.0000             |
+| Latency Max (ms)     | 1.2633 ± 0.4955             | 1.3225 ± 0.6191             | 1.0895 ± 0.2430             |
+
+![sysbench-memory](/assets/sysbench_memory_ops_per_sec.png)
+![sysbench-memory](/assets/sysbench_memory_transfer_rate_mibs.png)
+
+
+### iperf
+
+
+### iozone
 
 
 ## Conclusion
