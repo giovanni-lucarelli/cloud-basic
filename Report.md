@@ -920,9 +920,9 @@ Bogo Ops/s (usr + sys time)| 7338.567499999999 $\pm$ 768.3790180898939 | 5252.83
 
 | Metric               | VM                          | Container                   |
 |----------------------|-----------------------------|-----------------------------|
-Bitrate Standard GB/s | 2.66 $\pm$ 0.56 | 42.48 $\pm$ 6.75 |
-Bitrate UDB MB/s | 1.04 $\pm$ 0.08 | 1.05 $\pm$ 0.00 |
-Bitrate Retrans GB/s | 2.84 $\pm$ 1.28 | 43.04 $\pm$ 1.66 |
+TCP Upload GB/s | 2.66 $\pm$ 0.56 | 42.48 $\pm$ 6.75 |
+UDB MB/s | 1.04 $\pm$ 0.08 | 1.05 $\pm$ 0.00 |
+TCP Download GB/s | 2.84 $\pm$ 1.28 | 43.04 $\pm$ 1.66 |
 
 ### iozone
 
