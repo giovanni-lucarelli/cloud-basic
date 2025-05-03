@@ -40,6 +40,9 @@
     - [Memory Performance Metrics (Mean ± Standard Deviation)](#memory-performance-metrics-mean--standard-deviation)
   - [iperf](#iperf-1)
   - [iozone](#iozone-1)
+    - [write on local and shared](#write-on-local-and-shared)
+    - [read on local and shared](#read-on-local-and-shared)
+    - [Docker vs VirtualBox](#docker-vs-virtualbox)
 - [Conclusion](#conclusion)
 
 ## Introduction
@@ -915,8 +918,27 @@ Bogo Ops/s (usr + sys time)| 7338.567499999999 $\pm$ 768.3790180898939 | 5252.83
 
 ### iperf
 
+| Metric               | VM                          | Container                   |
+|----------------------|-----------------------------|-----------------------------|
+Bitrate Standard GB/s | 2.66 $\pm$ 0.56 | 42.48 $\pm$ 6.75 |
+Bitrate UDB MB/s | 1.04 $\pm$ 0.08 | 1.05 $\pm$ 0.00 |
+Bitrate Retrans GB/s | 2.84 $\pm$ 1.28 | 43.04 $\pm$ 1.66 |
 
 ### iozone
 
+Iozone benchmarkn contains a huge number of different tests, namely: read, write, ...
+Here are shown
+
+#### write on local and shared
+
+![write_loc](/assets/writer_loc_1024.png)
+![write_sh](/assets/writer_sh_1024.png)
+
+#### read on local and shared
+
+![read_loc](/assets/reader_loc_1024.png)
+![read_sh](/assets/reader_sh_1024.png)
+
+#### Docker vs VirtualBox
 
 ## Conclusion
