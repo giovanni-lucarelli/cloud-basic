@@ -1,0 +1,6 @@
+Benchmark,vm,vm sd,container,container sd,host,host sd
+MinPingPong,1.957,0.066,1.853,0.056,0.201,0.004
+AvgPingPong,49.026,1.597,6.855,0.600,0.211,0.005
+MaxPingPong,75.651,2.980,9.962,1.540,0.218,0.004
+NaturallyOrderedRing,61.426,7.146,5.926,0.376,0.227,0.005
+RandomlyOrderedRing,63.771,8.449,6.872,0.332,0.230,0.003

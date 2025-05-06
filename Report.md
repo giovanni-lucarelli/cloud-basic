@@ -558,7 +558,6 @@ and then move to the shared directory:
 
 ```
 
-Then here write the configuration file for the HPCC, namely `hpccinf.txt`:
 
 ```
 HPLinpack benchmark input file

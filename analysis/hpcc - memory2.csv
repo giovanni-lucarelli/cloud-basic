@@ -1,0 +1,7 @@
+Benchmark,vm,vm sd,container,container sd,host,host sd
+MPIRandomAccess_LCG,2.25,0.02,2.64,0.42,34.25,0.30
+MPIRandomAccess,2.29,0.02,2.60,0.54,31.58,0.51
+StarRandomAccess_LCG,5.71,0.03,13.85,2.17,14.29,0.39
+SingleRandomAccess_LCG,23.82,1.93,41.92,9.47,47.40,5.16
+StarRandomAccess,5.54,0.10,13.23,2.06,13.21,0.20
+SingleRandomAccess,25.56,2.23,44.71,9.66,46.89,2.46
