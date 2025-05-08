@@ -42,7 +42,7 @@ MPIFFT       & 1.231 ± 0.064 & 3.673 ± 0.124 & 4.042 ± 0.014 \\
     \centering
     \includegraphics[width=0.8\linewidth]{assets/hpcc_compute_performance.png}
     \caption{Caption}
-    \label{fig:enter-label}
+    \label{fig:hpcc_compute_performance}
 \end{figure}
 
 \subsubsection{Memory Benchmarks}
@@ -113,7 +113,7 @@ Single       & 25.56 ± 2.23 & 44.71 ± 9.66 & 46.89 ± 2.46 \\
     \centering
     \includegraphics[width=0.8\linewidth]{assets/hpcc_memory_performance.png}
     \caption{Caption}
-    \label{fig:enter-label}
+    \label{fig:hpcc_memory_performance}
 \end{figure}
 
 \subsubsection{Latency and Bandwidth}
@@ -154,7 +154,7 @@ RandomlyOrderedRing   & 0.120 ± 0.014 & 1.857 ± 0.020 & 2.971 ± 0.073 \\
     \centering
     \includegraphics[width=0.8\linewidth]{assets/hpcc_latency_performance.png}
     \caption{Note the log scale}
-    \label{fig:enter-label}
+    \label{fig:hpcc_latency_performance}
 \end{figure}
 
 \subsection{stress-ng}
@@ -183,7 +183,7 @@ The large difference between Real Time and Usr+Sys Time for the Container and Ho
     \bottomrule
     \end{tabular}
     \caption{kilo BogoOps/s for each benchmark, number of repetition of the experiment $n=5$}
-    \label{tab:my_label}
+    \label{tab:stress-ng}
 \end{table}
 \subsection{sysbench}
 %TODO: restyle
@@ -211,7 +211,7 @@ Memory Performance: This is where the significant differences lie. The Container
 
     \end{tabular}
     \caption{Caption}
-    \label{tab:my_label}
+    \label{tab:sysbench}
 \end{table}
 
 
@@ -229,7 +229,7 @@ For clarity the plots of the host are not reported(?) but can be found here.
     \centering
     \includegraphics[width=\linewidth]{assets/VM shared reader_Container shared reader_log_surfaces.png}
     \caption{local and shared reader report}
-    \label{fig:enter-label}
+    \label{fig:reader local and shared}
 \end{figure}
 
 \begin{figure}[H]
@@ -240,7 +240,7 @@ For clarity the plots of the host are not reported(?) but can be found here.
     \centering
     \includegraphics[width=\linewidth]{assets/VM shared writer_Container shared writer_log_surfaces.png}
     \caption{local and shared writer report}
-    \label{fig:enter-label}
+    \label{fig:writer local and shared}
 \end{figure}
 
 \begin{figure}[H]
@@ -251,7 +251,7 @@ For clarity the plots of the host are not reported(?) but can be found here.
     \centering
     \includegraphics[width=\linewidth]{assets/VM shared random read_Container shared random read_log_surfaces.png}
     \caption{local and shared random read report}
-    \label{fig:enter-label}
+    \label{fig:random read local and shared}
 \end{figure}
 
 \begin{figure}[H]
@@ -262,7 +262,7 @@ For clarity the plots of the host are not reported(?) but can be found here.
     \centering
     \includegraphics[width=\linewidth]{assets/VM shared random write_Container shared random write_log_surfaces.png}
     \caption{local and shared random write report}
-    \label{fig:enter-label}
+    \label{fig:random write local and shared}
 \end{figure}
 
 \subsection{iperf}
