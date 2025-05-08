@@ -1,4 +1,0 @@
-\begin{Verbatim}[commandchars=\\\{\}]
-sudo\PYG{+w}{ }systemctl\PYG{+w}{ }\PYG{n+nb}{enable}\PYG{+w}{ }nfs\PYGZhy{}kernel\PYGZhy{}server
-sudo\PYG{+w}{ }systemctl\PYG{+w}{ }restart\PYG{+w}{ }nfs\PYGZhy{}kernel\PYGZhy{}server
-\end{Verbatim}

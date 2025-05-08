@@ -1,5 +1,0 @@
-\begin{Verbatim}[commandchars=\\\{\}]
-docker\PYG{+w}{ }\PYG{n+nb}{exec}\PYG{+w}{ }\PYGZhy{}it\PYG{+w}{ }cluster01\PYG{+w}{ }bash
-\PYG{c+c1}{\PYGZsh{} or}
-ssh\PYG{+w}{ }\PYGZhy{}p\PYG{+w}{ }\PYG{l+m}{2220}\PYG{+w}{ }user01@localhost
-\end{Verbatim}

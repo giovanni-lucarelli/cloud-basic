@@ -1,3 +1,0 @@
-\begin{Verbatim}[commandchars=\\\{\}]
-sudo\PYG{+w}{ }chown\PYG{+w}{ }\PYGZhy{}R\PYG{+w}{ }user01:user01\PYG{+w}{ }/shared
-\end{Verbatim}

@@ -1,3 +1,0 @@
-\begin{Verbatim}[commandchars=\\\{\}]
-mpirun\PYG{+w}{ }\PYGZhy{}np\PYG{+w}{ }\PYG{l+m}{4}\PYG{+w}{ }\PYGZhy{}hostfile\PYG{+w}{ }hosts\PYG{+w}{ }hostname
-\end{Verbatim}

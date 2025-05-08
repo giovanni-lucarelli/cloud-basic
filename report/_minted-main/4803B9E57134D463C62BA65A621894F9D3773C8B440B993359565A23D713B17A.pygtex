@@ -1,3 +1,0 @@
-\begin{Verbatim}[commandchars=\\\{\}]
-sudo\PYG{+w}{ }systemctl\PYG{+w}{ }restart\PYG{+w}{ }autofs
-\end{Verbatim}

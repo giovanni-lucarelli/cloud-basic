@@ -1,4 +1,0 @@
-\begin{Verbatim}[commandchars=\\\{\}]
-sudo\PYG{+w}{ }iptables\PYG{+w}{ }\PYGZhy{}t\PYG{+w}{ }nat\PYG{+w}{ }\PYGZhy{}A\PYG{+w}{ }POSTROUTING\PYG{+w}{ }\PYGZhy{}o\PYG{+w}{ }enp0s3\PYG{+w}{ }\PYGZhy{}j\PYG{+w}{ }MASQUERADE
-sudo\PYG{+w}{ }netfilter\PYGZhy{}persistent\PYG{+w}{ }save
-\end{Verbatim}
