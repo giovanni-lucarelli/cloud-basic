@@ -1,6 +1,6 @@
 /.vscode
 
-/_minted-main
+//_minted-main
 
 # LaTeX-related files
 # LaTeX auxiliary files
@@ -12,4 +12,6 @@
 *.toc
 *.bbl
 *.aux
+*.pygtex
+*.pygstyle
 
