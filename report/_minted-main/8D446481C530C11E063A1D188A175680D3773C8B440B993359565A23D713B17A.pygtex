@@ -1,0 +1,4 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+sudo\PYG{+w}{ }killall\PYG{+w}{ }iperf3\PYG{+w}{ }\PYG{c+c1}{\PYGZsh{} clean up before running a test}
+iperf3\PYG{+w}{ }\PYGZhy{}s\PYG{+w}{ }\PYG{p}{|}\PYG{+w}{ }tee\PYG{+w}{ }iperf3\PYGZus{}results.txt
+\end{Verbatim}

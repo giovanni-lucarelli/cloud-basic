@@ -1,0 +1,4 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+node01\PYG{+w}{ }\PYG{n+nv}{slots}\PYG{o}{=}\PYG{l+m}{2}
+node02\PYG{+w}{ }\PYG{n+nv}{slots}\PYG{o}{=}\PYG{l+m}{2}
+\end{Verbatim}

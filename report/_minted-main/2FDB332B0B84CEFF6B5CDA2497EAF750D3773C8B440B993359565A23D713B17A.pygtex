@@ -1,0 +1,38 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+HPLinpack\PYG{+w}{ }benchmark\PYG{+w}{ }input\PYG{+w}{ }file
+Innovative\PYG{+w}{ }Computing\PYG{+w}{ }Laboratory,\PYG{+w}{ }University\PYG{+w}{ }of\PYG{+w}{ }Tennessee
+HPL.out\PYG{+w}{      }output\PYG{+w}{ }file\PYG{+w}{ }name\PYG{+w}{ }\PYG{o}{(}\PYG{k}{if}\PYG{+w}{ }any\PYG{o}{)}
+\PYG{l+m}{6}\PYG{+w}{            }device\PYG{+w}{ }out\PYG{+w}{ }\PYG{o}{(}\PYG{n+nv}{6}\PYG{o}{=}stdout,7\PYG{o}{=}stderr,file\PYG{o}{)}
+\PYG{l+m}{1}\PYG{+w}{            }\PYG{c+c1}{\PYGZsh{} of problems sizes (N)}
+\PYG{l+m}{20352}\PYG{+w}{         }Ns
+\PYG{l+m}{1}\PYG{+w}{            }\PYG{c+c1}{\PYGZsh{} of NBs}
+\PYG{l+m}{192}\PYG{+w}{           }NBs
+\PYG{l+m}{0}\PYG{+w}{            }PMAP\PYG{+w}{ }process\PYG{+w}{ }mapping\PYG{+w}{ }\PYG{o}{(}\PYG{n+nv}{0}\PYG{o}{=}Row\PYGZhy{},1\PYG{o}{=}Column\PYGZhy{}major\PYG{o}{)}
+\PYG{l+m}{1}\PYG{+w}{            }\PYG{c+c1}{\PYGZsh{} of process grids (P x Q)}
+\PYG{l+m}{2}\PYG{+w}{            }Ps
+\PYG{l+m}{2}\PYG{+w}{            }Qs
+\PYG{l+m}{16}.0\PYG{+w}{         }threshold
+\PYG{l+m}{1}\PYG{+w}{            }\PYG{c+c1}{\PYGZsh{} of panel fact}
+\PYG{l+m}{2}\PYG{+w}{            }PFACTs\PYG{+w}{ }\PYG{o}{(}\PYG{n+nv}{0}\PYG{o}{=}left,\PYG{+w}{ }\PYG{n+nv}{1}\PYG{o}{=}Crout,\PYG{+w}{ }\PYG{n+nv}{2}\PYG{o}{=}Right\PYG{o}{)}
+\PYG{l+m}{1}\PYG{+w}{            }\PYG{c+c1}{\PYGZsh{} of recursive stopping criterium}
+\PYG{l+m}{4}\PYG{+w}{            }NBMINs\PYG{+w}{ }\PYG{o}{(}\PYGZgt{}\PYG{o}{=}\PYG{+w}{ }\PYG{l+m}{1}\PYG{o}{)}
+\PYG{l+m}{1}\PYG{+w}{            }\PYG{c+c1}{\PYGZsh{} of panels in recursion}
+\PYG{l+m}{2}\PYG{+w}{            }NDIVs
+\PYG{l+m}{1}\PYG{+w}{            }\PYG{c+c1}{\PYGZsh{} of recursive panel fact.}
+\PYG{l+m}{1}\PYG{+w}{            }RFACTs\PYG{+w}{ }\PYG{o}{(}\PYG{n+nv}{0}\PYG{o}{=}left,\PYG{+w}{ }\PYG{n+nv}{1}\PYG{o}{=}Crout,\PYG{+w}{ }\PYG{n+nv}{2}\PYG{o}{=}Right\PYG{o}{)}
+\PYG{l+m}{1}\PYG{+w}{            }\PYG{c+c1}{\PYGZsh{} of broadcast}
+\PYG{l+m}{1}\PYG{+w}{            }BCASTs\PYG{+w}{ }\PYG{o}{(}\PYG{n+nv}{0}\PYG{o}{=}1rg,1\PYG{o}{=}1rM,2\PYG{o}{=}2rg,3\PYG{o}{=}2rM,4\PYG{o}{=}Lng,5\PYG{o}{=}LnM\PYG{o}{)}
+\PYG{l+m}{1}\PYG{+w}{            }\PYG{c+c1}{\PYGZsh{} of lookahead depth}
+\PYG{l+m}{1}\PYG{+w}{            }DEPTHs\PYG{+w}{ }\PYG{o}{(}\PYGZgt{}\PYG{o}{=}\PYG{l+m}{0}\PYG{o}{)}
+\PYG{l+m}{2}\PYG{+w}{            }SWAP\PYG{+w}{ }\PYG{o}{(}\PYG{n+nv}{0}\PYG{o}{=}bin\PYGZhy{}exch,1\PYG{o}{=}long,2\PYG{o}{=}mix\PYG{o}{)}
+\PYG{l+m}{64}\PYG{+w}{           }swapping\PYG{+w}{ }threshold
+\PYG{l+m}{0}\PYG{+w}{            }L1\PYG{+w}{ }\PYG{k}{in}\PYG{+w}{ }\PYG{o}{(}\PYG{n+nv}{0}\PYG{o}{=}transposed,1\PYG{o}{=}no\PYGZhy{}transposed\PYG{o}{)}\PYG{+w}{ }form
+\PYG{l+m}{0}\PYG{+w}{            }U\PYG{+w}{  }\PYG{k}{in}\PYG{+w}{ }\PYG{o}{(}\PYG{n+nv}{0}\PYG{o}{=}transposed,1\PYG{o}{=}no\PYGZhy{}transposed\PYG{o}{)}\PYG{+w}{ }form
+\PYG{l+m}{1}\PYG{+w}{            }Equilibration\PYG{+w}{ }\PYG{o}{(}\PYG{n+nv}{0}\PYG{o}{=}no,1\PYG{o}{=}yes\PYG{o}{)}
+\PYG{l+m}{8}\PYG{+w}{            }memory\PYG{+w}{ }alignment\PYG{+w}{ }\PYG{k}{in}\PYG{+w}{ }double\PYG{+w}{ }\PYG{o}{(}\PYGZgt{}\PYG{+w}{ }\PYG{l+m}{0}\PYG{o}{)}
+\PYG{c+c1}{\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{} This line (no. 32) is ignored (it serves as a separator). \PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}}
+\PYG{l+m}{0}\PYG{+w}{                               }Number\PYG{+w}{ }of\PYG{+w}{ }additional\PYG{+w}{ }problem\PYG{+w}{ }sizes\PYG{+w}{ }\PYG{k}{for}\PYG{+w}{ }PTRANS
+\PYG{l+m}{1200}\PYG{+w}{ }\PYG{l+m}{10000}\PYG{+w}{ }\PYG{l+m}{30000}\PYG{+w}{                }values\PYG{+w}{ }of\PYG{+w}{ }N
+\PYG{l+m}{0}\PYG{+w}{                               }number\PYG{+w}{ }of\PYG{+w}{ }additional\PYG{+w}{ }blocking\PYG{+w}{ }sizes\PYG{+w}{ }\PYG{k}{for}\PYG{+w}{ }PTRANS
+\PYG{l+m}{40}\PYG{+w}{ }\PYG{l+m}{9}\PYG{+w}{ }\PYG{l+m}{8}\PYG{+w}{ }\PYG{l+m}{13}\PYG{+w}{ }\PYG{l+m}{13}\PYG{+w}{ }\PYG{l+m}{20}\PYG{+w}{ }\PYG{l+m}{16}\PYG{+w}{ }\PYG{l+m}{32}\PYG{+w}{ }\PYG{l+m}{64}\PYG{+w}{        }values\PYG{+w}{ }of\PYG{+w}{ }NB
+\end{Verbatim}

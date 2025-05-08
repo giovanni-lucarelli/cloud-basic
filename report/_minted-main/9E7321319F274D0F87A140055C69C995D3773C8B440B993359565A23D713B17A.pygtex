@@ -1,0 +1,22 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{c+ch}{\PYGZsh{}!/bin/bash}
+
+\PYG{c+c1}{\PYGZsh{} Number of iterations}
+\PYG{n+nv}{ITERATIONS}\PYG{o}{=}\PYG{l+m}{5}
+
+\PYG{c+c1}{\PYGZsh{} Run CPU test 5 times}
+\PYG{n+nb}{echo}\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}Running CPU test }\PYG{n+nv}{\PYGZdl{}ITERATIONS}\PYG{l+s+s2}{ times...\PYGZdq{}}
+\PYG{k}{for}\PYG{+w}{ }i\PYG{+w}{ }\PYG{k}{in}\PYG{+w}{ }\PYG{k}{\PYGZdl{}(}seq\PYG{+w}{ }\PYG{l+m}{1}\PYG{+w}{ }\PYG{n+nv}{\PYGZdl{}ITERATIONS}\PYG{k}{)}\PYG{p}{;}\PYG{+w}{ }\PYG{k}{do}
+\PYG{+w}{    }\PYG{n+nb}{echo}\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}CPU Test Run \PYGZsh{}}\PYG{n+nv}{\PYGZdl{}i}\PYG{l+s+s2}{\PYGZdq{}}
+\PYG{+w}{    }mpirun\PYG{+w}{ }\PYGZhy{}np\PYG{+w}{ }\PYG{l+m}{4}\PYG{+w}{ }\PYGZhy{}hostfile\PYG{+w}{ }hosts\PYG{+w}{ }sysbench\PYG{+w}{ }\PYGZhy{}\PYGZhy{}test\PYG{o}{=}cpu\PYG{+w}{ }\PYGZhy{}\PYGZhy{}cpu\PYGZhy{}max\PYGZhy{}prime\PYG{o}{=}\PYG{l+m}{20000}\PYG{+w}{ }run\PYG{+w}{ }\PYG{p}{|}\PYG{+w}{ }tee\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}sysbench\PYGZus{}cpu\PYGZus{}result\PYGZus{}}\PYG{n+nv}{\PYGZdl{}i}\PYG{l+s+s2}{.txt\PYGZdq{}}
+\PYG{k}{done}
+
+\PYG{c+c1}{\PYGZsh{} Run Memory test 5 times}
+\PYG{n+nb}{echo}\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}Running Memory test }\PYG{n+nv}{\PYGZdl{}ITERATIONS}\PYG{l+s+s2}{ times...\PYGZdq{}}
+\PYG{k}{for}\PYG{+w}{ }i\PYG{+w}{ }\PYG{k}{in}\PYG{+w}{ }\PYG{k}{\PYGZdl{}(}seq\PYG{+w}{ }\PYG{l+m}{1}\PYG{+w}{ }\PYG{n+nv}{\PYGZdl{}ITERATIONS}\PYG{k}{)}\PYG{p}{;}\PYG{+w}{ }\PYG{k}{do}
+\PYG{+w}{    }\PYG{n+nb}{echo}\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}Memory Test Run \PYGZsh{}}\PYG{n+nv}{\PYGZdl{}i}\PYG{l+s+s2}{\PYGZdq{}}
+\PYG{+w}{    }mpirun\PYG{+w}{ }\PYGZhy{}np\PYG{+w}{ }\PYG{l+m}{4}\PYG{+w}{ }\PYGZhy{}hostfile\PYG{+w}{ }hosts\PYG{+w}{ }sysbench\PYG{+w}{ }\PYGZhy{}\PYGZhy{}test\PYG{o}{=}memory\PYG{+w}{ }\PYGZhy{}\PYGZhy{}memory\PYGZhy{}total\PYGZhy{}size\PYG{o}{=}10G\PYG{+w}{ }run\PYG{+w}{ }\PYG{p}{|}\PYG{+w}{ }tee\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}sysbench\PYGZus{}mem\PYGZus{}result\PYGZus{}}\PYG{n+nv}{\PYGZdl{}i}\PYG{l+s+s2}{.txt\PYGZdq{}}
+\PYG{k}{done}
+
+\PYG{n+nb}{echo}\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}All tests completed.\PYGZdq{}}
+\end{Verbatim}

@@ -1,1 +1,18 @@
 /.vscode
+
+/_minted*
+
+# LaTeX-related files
+# LaTeX auxiliary files
+.fdb_latexmk
+.fls
+.log
+.out
+.synctex.gz
+.toc
+.bbl
+.pyg
+
+# Python-related temporary files
+.pygthon-related files
+.pyg

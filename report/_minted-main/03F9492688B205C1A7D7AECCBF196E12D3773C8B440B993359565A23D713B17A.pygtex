@@ -1,0 +1,11 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+sudo\PYG{+w}{ }apt\PYG{+w}{ }update\PYG{+w}{ }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }sudo\PYG{+w}{ }apt\PYG{+w}{ }upgrade
+sudo\PYG{+w}{ }apt\PYG{+w}{ }install\PYG{+w}{ }build\PYGZhy{}essential\PYG{+w}{ }wget\PYG{+w}{ }curl\PYG{+w}{ }\PYG{l+s+se}{\PYGZbs{}}
+\PYG{c+c1}{\PYGZsh{} network service}
+dnsmasq\PYG{+w}{ }ssh\PYG{+w}{ }iptables\PYGZhy{}persistent\PYG{+w}{ }\PYG{l+s+se}{\PYGZbs{}}
+\PYG{c+c1}{\PYGZsh{} benchmarking tools}
+iozone3\PYG{+w}{ }iperf3\PYG{+w}{ }netcat\PYG{+w}{ }stress\PYGZhy{}ng\PYG{+w}{ }sysbench\PYG{+w}{ }openmpi\PYGZhy{}bin\PYG{+w}{ }libopenmpi\PYGZhy{}dev\PYG{+w}{ }hpcc\PYG{+w}{ }\PYG{l+s+se}{\PYGZbs{}}
+nof\PYGZhy{}common\PYG{+w}{ }nfs\PYGZhy{}kernel\PYGZhy{}server
+\PYG{c+c1}{\PYGZsh{} restarting the system}
+sudo\PYG{+w}{ }shutdown\PYG{+w}{ }\PYGZhy{}h\PYG{+w}{ }now
+\end{Verbatim}

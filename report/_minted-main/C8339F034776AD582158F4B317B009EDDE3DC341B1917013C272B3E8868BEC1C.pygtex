@@ -1,0 +1,13 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{l+lScalar+lScalarPlain}{port=53}
+\PYG{l+lScalar+lScalarPlain}{bogus\PYGZhy{}priv}
+\PYG{l+lScalar+lScalarPlain}{strict\PYGZhy{}order}
+\PYG{l+lScalar+lScalarPlain}{interface=enp0s8}
+\PYG{l+lScalar+lScalarPlain}{listen\PYGZhy{}address=::1,127.0.0.1,192.168.0.1}
+\PYG{l+lScalar+lScalarPlain}{bind\PYGZhy{}interfaces}
+\PYG{l+lScalar+lScalarPlain}{log\PYGZhy{}queries}
+\PYG{l+lScalar+lScalarPlain}{log\PYGZhy{}dhcp}
+\PYG{l+lScalar+lScalarPlain}{dhcp\PYGZhy{}range=192.168.0.2,192.168.0.14,255.255.255.240,12h}
+\PYG{l+lScalar+lScalarPlain}{dhcp\PYGZhy{}option=option:dns\PYGZhy{}server,192.168.0.1}
+\PYG{l+lScalar+lScalarPlain}{dhcp\PYGZhy{}option=3}
+\end{Verbatim}

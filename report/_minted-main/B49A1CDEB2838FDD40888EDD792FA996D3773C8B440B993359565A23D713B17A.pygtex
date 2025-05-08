@@ -1,0 +1,5 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+//\PYG{+w}{ }from\PYG{+w}{ }master\PYG{+w}{ }node
+ssh\PYGZhy{}keygen\PYG{+w}{ }\PYGZhy{}t\PYG{+w}{ }rsa\PYG{+w}{ }\PYGZhy{}b\PYG{+w}{ }\PYG{l+m}{4096}
+ssh\PYGZhy{}copy\PYGZhy{}id\PYG{+w}{ }node01
+\end{Verbatim}

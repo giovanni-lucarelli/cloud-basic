@@ -1,0 +1,4 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n+nb}{export}\PYG{+w}{ }\PYG{n+nv}{ssh}\PYG{o}{=}rsh
+iozone\PYG{+w}{ }\PYGZhy{}+m\PYG{+w}{ }/shared/iozone/machines.txt\PYG{+w}{ }\PYGZhy{}f\PYG{+w}{ }/shared/iozone/testfile\PYG{+w}{ }\PYGZhy{}a\PYG{+w}{ }\PYGZhy{}R\PYG{+w}{ }\PYGZhy{}O\PYG{+w}{ }\PYG{p}{|}\PYG{+w}{ }tee\PYG{+w}{ }iozone\PYGZus{}shared\PYGZus{}results.txt
+\end{Verbatim}

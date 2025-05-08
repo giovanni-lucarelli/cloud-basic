@@ -1,0 +1,3 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+sudo\PYG{+w}{ }mount\PYG{+w}{ }\PYG{l+m}{192}.168.0.1:/shared\PYG{+w}{ }/shared
+\end{Verbatim}

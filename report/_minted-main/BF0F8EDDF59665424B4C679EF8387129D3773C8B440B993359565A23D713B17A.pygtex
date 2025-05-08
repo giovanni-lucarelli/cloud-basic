@@ -1,0 +1,4 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+chmod\PYG{+w}{ }+x\PYG{+w}{ }run\PYGZus{}stress\PYGZus{}tests.sh
+./run\PYGZus{}stress\PYGZus{}tests.sh
+\end{Verbatim}

@@ -1,0 +1,3 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+sudo\PYG{+w}{ }netplan\PYG{+w}{ }apply
+\end{Verbatim}

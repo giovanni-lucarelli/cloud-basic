@@ -2,35 +2,35 @@
 \contentsline {section}{\numberline {2}Methodology}{3}{section.2}%
 \contentsline {subsection}{\numberline {2.1}Virtual Machine (VM) Setup}{3}{subsection.2.1}%
 \contentsline {subsubsection}{\numberline {2.1.1}Template Machine Configuration}{3}{subsubsection.2.1.1}%
-\contentsline {subsubsection}{\numberline {2.1.2}Network Adapters Configuration}{3}{subsubsection.2.1.2}%
-\contentsline {subsubsection}{\numberline {2.1.3}Master Node Configuration}{4}{subsubsection.2.1.3}%
-\contentsline {paragraph}{DNS Configuration (dnsmasq).}{4}{section*.2}%
-\contentsline {paragraph}{Gateway Configuration.}{4}{section*.3}%
-\contentsline {paragraph}{Distributed File System (NFS).}{5}{section*.4}%
-\contentsline {subsubsection}{\numberline {2.1.4}Worker Nodes Configuration}{5}{subsubsection.2.1.4}%
-\contentsline {paragraph}{Network Configuration}{5}{section*.5}%
-\contentsline {paragraph}{SSH setup.}{5}{section*.6}%
-\contentsline {paragraph}{Distributed File System Configuration.}{5}{section*.7}%
-\contentsline {paragraph}{Clone the Worker Node.}{5}{section*.8}%
-\contentsline {subsection}{\numberline {2.2}Container Setup}{5}{subsection.2.2}%
-\contentsline {subsubsection}{\numberline {2.2.1}Template Machine Configuration (Dockerfile)}{5}{subsubsection.2.2.1}%
-\contentsline {subsubsection}{\numberline {2.2.2}Cluster Configuration (Docker Compose)}{6}{subsubsection.2.2.2}%
-\contentsline {subsubsection}{\numberline {2.2.3}Starting the Cluster}{6}{subsubsection.2.2.3}%
-\contentsline {subsection}{\numberline {2.3}Testing Procedures}{6}{subsection.2.3}%
-\contentsline {subsubsection}{\numberline {2.3.1}HPCC}{7}{subsubsection.2.3.1}%
-\contentsline {subsubsection}{\numberline {2.3.2}stress-ng}{7}{subsubsection.2.3.2}%
-\contentsline {subsubsection}{\numberline {2.3.3}sysbench}{7}{subsubsection.2.3.3}%
-\contentsline {subsubsection}{\numberline {2.3.4}iozone}{7}{subsubsection.2.3.4}%
-\contentsline {paragraph}{Local filesystem.}{7}{section*.9}%
-\contentsline {paragraph}{Shared filesystem.}{8}{section*.10}%
-\contentsline {subsubsection}{\numberline {2.3.5}iperf}{8}{subsubsection.2.3.5}%
-\contentsline {section}{\numberline {3}Results and Discussion}{8}{section.3}%
-\contentsline {subsection}{\numberline {3.1}HPCC}{8}{subsection.3.1}%
-\contentsline {subsubsection}{\numberline {3.1.1}Compute Performance}{8}{subsubsection.3.1.1}%
-\contentsline {subsubsection}{\numberline {3.1.2}Memory Benchmarks}{9}{subsubsection.3.1.2}%
-\contentsline {subsubsection}{\numberline {3.1.3}Latency and Bandwidth}{12}{subsubsection.3.1.3}%
-\contentsline {subsection}{\numberline {3.2}stress-ng}{14}{subsection.3.2}%
-\contentsline {subsection}{\numberline {3.3}sysbench}{14}{subsection.3.3}%
-\contentsline {subsection}{\numberline {3.4}IOZone}{15}{subsection.3.4}%
-\contentsline {subsection}{\numberline {3.5}iperf}{18}{subsection.3.5}%
-\contentsline {section}{\numberline {4}Conclusion}{19}{section.4}%
+\contentsline {subsubsection}{\numberline {2.1.2}Network Adapters Configuration}{4}{subsubsection.2.1.2}%
+\contentsline {subsubsection}{\numberline {2.1.3}Master Node Configuration}{5}{subsubsection.2.1.3}%
+\contentsline {paragraph}{DNS Configuration (dnsmasq).}{6}{section*.2}%
+\contentsline {paragraph}{Gateway Configuration.}{6}{section*.3}%
+\contentsline {paragraph}{Distributed File System (NFS).}{7}{section*.4}%
+\contentsline {subsubsection}{\numberline {2.1.4}Worker Nodes Configuration}{7}{subsubsection.2.1.4}%
+\contentsline {paragraph}{Network Configuration}{7}{section*.5}%
+\contentsline {paragraph}{SSH setup.}{8}{section*.6}%
+\contentsline {paragraph}{Distributed File System Configuration.}{8}{section*.7}%
+\contentsline {paragraph}{Clone the Worker Node.}{8}{section*.8}%
+\contentsline {subsection}{\numberline {2.2}Container Setup}{9}{subsection.2.2}%
+\contentsline {subsubsection}{\numberline {2.2.1}Template Machine Configuration (Dockerfile)}{9}{subsubsection.2.2.1}%
+\contentsline {subsubsection}{\numberline {2.2.2}Cluster Configuration (Docker Compose)}{10}{subsubsection.2.2.2}%
+\contentsline {subsubsection}{\numberline {2.2.3}Starting the Cluster}{12}{subsubsection.2.2.3}%
+\contentsline {subsection}{\numberline {2.3}Testing Procedures}{13}{subsection.2.3}%
+\contentsline {subsubsection}{\numberline {2.3.1}HPCC}{14}{subsubsection.2.3.1}%
+\contentsline {subsubsection}{\numberline {2.3.2}stress-ng}{15}{subsubsection.2.3.2}%
+\contentsline {subsubsection}{\numberline {2.3.3}sysbench}{16}{subsubsection.2.3.3}%
+\contentsline {subsubsection}{\numberline {2.3.4}iozone}{17}{subsubsection.2.3.4}%
+\contentsline {paragraph}{Local filesystem.}{17}{section*.9}%
+\contentsline {paragraph}{Shared filesystem.}{17}{section*.10}%
+\contentsline {subsubsection}{\numberline {2.3.5}iperf}{17}{subsubsection.2.3.5}%
+\contentsline {section}{\numberline {3}Results and Discussion}{18}{section.3}%
+\contentsline {subsection}{\numberline {3.1}HPCC}{18}{subsection.3.1}%
+\contentsline {subsubsection}{\numberline {3.1.1}Compute Performance}{18}{subsubsection.3.1.1}%
+\contentsline {subsubsection}{\numberline {3.1.2}Memory Benchmarks}{19}{subsubsection.3.1.2}%
+\contentsline {subsubsection}{\numberline {3.1.3}Latency and Bandwidth}{22}{subsubsection.3.1.3}%
+\contentsline {subsection}{\numberline {3.2}stress-ng}{24}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}sysbench}{24}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}IOZone}{25}{subsection.3.4}%
+\contentsline {subsection}{\numberline {3.5}iperf}{28}{subsection.3.5}%
+\contentsline {section}{\numberline {4}Conclusion}{29}{section.4}%

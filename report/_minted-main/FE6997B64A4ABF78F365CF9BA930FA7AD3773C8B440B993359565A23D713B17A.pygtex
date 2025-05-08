@@ -1,0 +1,4 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+which\PYG{+w}{ }hpcc
+\PYG{+w}{ }cp\PYG{+w}{ }\PYGZhy{}r\PYG{+w}{ }/path/to/hpcc\PYG{+w}{ }/shared/hpcc
+\end{Verbatim}

@@ -1,0 +1,6 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+ssh\PYG{+w}{ }node01
+\PYG{n+nb}{exit}
+ssh\PYG{+w}{ }node02
+\PYG{n+nb}{exit}
+\end{Verbatim}

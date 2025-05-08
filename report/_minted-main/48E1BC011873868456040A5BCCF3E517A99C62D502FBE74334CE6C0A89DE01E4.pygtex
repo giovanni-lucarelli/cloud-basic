@@ -1,0 +1,48 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{FROM}\PYG{+w}{ }\PYG{l+s}{ubuntu:latest}
+
+\PYG{k}{ENV}\PYG{+w}{ }\PYG{n+nv}{DEBIAN\PYGZus{}FRONTEND}\PYG{o}{=}noninteractive
+
+\PYG{k}{RUN}\PYG{+w}{ }apt\PYGZhy{}get\PYG{+w}{ }update\PYG{+w}{ }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }apt\PYGZhy{}get\PYG{+w}{ }install\PYG{+w}{ }\PYGZhy{}y\PYG{+w}{ }\PYG{l+s+se}{\PYGZbs{}}
+\PYG{+w}{    }build\PYGZhy{}essential\PYG{+w}{ }wget\PYG{+w}{ }curl\PYG{+w}{ }\PYG{l+s+se}{\PYGZbs{}}
+\PYG{+w}{    }openssh\PYGZhy{}server\PYG{+w}{ }rsync\PYG{+w}{ }iputils\PYGZhy{}ping\PYG{+w}{ }\PYG{l+s+se}{\PYGZbs{}}
+\PYG{+w}{    }dnsmasq\PYG{+w}{ }ssh\PYG{+w}{ }iptables\PYGZhy{}persistent\PYG{+w}{ }\PYG{l+s+se}{\PYGZbs{}}
+\PYG{+w}{    }iozone3\PYG{+w}{ }iperf3\PYG{+w}{ }netcat\PYGZhy{}openbsd\PYG{+w}{ }\PYG{l+s+se}{\PYGZbs{}}
+\PYG{+w}{    }stress\PYGZhy{}ng\PYG{+w}{ }sysbench\PYG{+w}{ }openmpi\PYGZhy{}bin\PYG{+w}{ }libopenmpi\PYGZhy{}dev\PYG{+w}{ }hpcc\PYG{+w}{ }\PYG{l+s+se}{\PYGZbs{}}
+\PYG{+w}{    }nfs\PYGZhy{}common\PYG{+w}{ }nfs\PYGZhy{}kernel\PYGZhy{}server\PYG{+w}{ }sudo\PYG{+w}{ }\PYG{l+s+se}{\PYGZbs{}}
+\PYG{+w}{    }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }rm\PYG{+w}{ }\PYGZhy{}rf\PYG{+w}{ }/var/lib/apt/lists/*
+
+\PYG{c}{\PYGZsh{} Add the user}
+\PYG{k}{RUN}\PYG{+w}{ }useradd\PYG{+w}{ }\PYGZhy{}m\PYG{+w}{ }\PYGZhy{}s\PYG{+w}{ }/bin/bash\PYG{+w}{ }user01\PYG{+w}{ }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }\PYG{n+nb}{echo}\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}user01:0000\PYGZdq{}}\PYG{+w}{ }\PYG{p}{|}\PYG{+w}{ }chpasswd\PYG{+w}{ }\PYG{l+s+se}{\PYGZbs{}}
+\PYG{+w}{    }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }\PYG{n+nb}{echo}\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}user01 ALL=(ALL) NOPASSWD:ALL\PYGZdq{}}\PYG{+w}{ }\PYGZgt{}\PYGZgt{}\PYG{+w}{ }/etc/sudoers
+
+\PYG{c}{\PYGZsh{} Create SSH directory and generate keys for user01}
+\PYG{k}{RUN}\PYG{+w}{ }mkdir\PYG{+w}{ }\PYGZhy{}p\PYG{+w}{ }/home/user01/.ssh\PYG{+w}{ }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }\PYG{l+s+se}{\PYGZbs{}}
+\PYG{+w}{    }ssh\PYGZhy{}keygen\PYG{+w}{ }\PYGZhy{}t\PYG{+w}{ }rsa\PYG{+w}{ }\PYGZhy{}N\PYG{+w}{ }\PYG{l+s+s1}{\PYGZsq{}\PYGZsq{}}\PYG{+w}{ }\PYGZhy{}f\PYG{+w}{ }/home/user01/.ssh/id\PYGZus{}rsa\PYG{+w}{ }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }\PYG{l+s+se}{\PYGZbs{}}
+\PYG{+w}{    }cat\PYG{+w}{ }/home/user01/.ssh/id\PYGZus{}rsa.pub\PYG{+w}{ }\PYGZgt{}\PYG{+w}{ }/home/user01/.ssh/authorized\PYGZus{}keys\PYG{+w}{ }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }\PYG{l+s+se}{\PYGZbs{}}
+\PYG{+w}{    }chmod\PYG{+w}{ }\PYG{l+m}{700}\PYG{+w}{ }/home/user01/.ssh\PYG{+w}{ }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }\PYG{l+s+se}{\PYGZbs{}}
+\PYG{+w}{    }chmod\PYG{+w}{ }\PYG{l+m}{600}\PYG{+w}{ }/home/user01/.ssh/id\PYGZus{}rsa\PYG{+w}{ }/home/user01/.ssh/authorized\PYGZus{}keys\PYG{+w}{ }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }\PYG{l+s+se}{\PYGZbs{}}
+\PYG{+w}{    }chown\PYG{+w}{ }\PYGZhy{}R\PYG{+w}{ }user01:user01\PYG{+w}{ }/home/user01/.ssh
+
+\PYG{c}{\PYGZsh{} Copy the public key to a shared location (optional)}
+\PYG{k}{RUN}\PYG{+w}{ }cp\PYG{+w}{ }/home/user01/.ssh/id\PYGZus{}rsa.pub\PYG{+w}{ }/tmp/user01\PYGZus{}rsa.pub
+
+\PYG{c}{\PYGZsh{} Create the directory for privilege separation}
+\PYG{k}{RUN}\PYG{+w}{ }mkdir\PYG{+w}{ }\PYGZhy{}p\PYG{+w}{ }/run/sshd
+
+\PYG{c}{\PYGZsh{} Generating the host keys is important for SSH to work properly}
+\PYG{c}{\PYGZsh{} The \PYGZhy{}A flag generates all the default keys}
+\PYG{k}{RUN}\PYG{+w}{ }ssh\PYGZhy{}keygen\PYG{+w}{ }\PYGZhy{}A
+
+\PYG{c}{\PYGZsh{} Expose the SSH port}
+\PYG{k}{EXPOSE}\PYG{+w}{ }\PYG{l+s}{22}
+
+\PYG{c}{\PYGZsh{} Switch to user01}
+\PYG{k}{USER}\PYG{+w}{ }\PYG{l+s}{user01}
+\PYG{k}{WORKDIR}\PYG{+w}{ }\PYG{l+s}{/home/user01}
+
+\PYG{c}{\PYGZsh{} Start the SSH server}
+\PYG{c}{\PYGZsh{} The \PYGZhy{}D flag runs the server in the foreground}
+\PYG{c}{\PYGZsh{} The \PYGZhy{}e flag enables logging to stderr}
+\PYG{k}{CMD}\PYG{+w}{ }\PYG{p}{[}\PYG{l+s+s2}{\PYGZdq{}sudo\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}/usr/sbin/sshd\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}\PYGZhy{}D\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}\PYGZhy{}e\PYGZdq{}}\PYG{p}{]}
+\end{Verbatim}

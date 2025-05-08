@@ -1,0 +1,5 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{l+lScalar+lScalarPlain}{ssh\PYGZhy{}keygen}
+\PYG{l+lScalar+lScalarPlain}{cd \PYGZti{}/.ssh}
+\PYG{l+lScalar+lScalarPlain}{scp \PYGZhy{}P 3333 key\PYGZus{}id.pub user01@127.0.0.1:\PYGZti{}}
+\end{Verbatim}
