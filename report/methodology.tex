@@ -1,0 +1,666 @@
+\section{Methodology}
+
+The whole study has been performed on a laptop with the following specifications:
+
+\begin{minted}{bash}
+CPU Model: Intel(R) Core(TM) i7-8550U CPU @ 1.80GHz
+Cores / Threads: 4 Cores / 8 Threads (4 cores x 2 threads/core)
+RAM: 8 GB
+Disk: SanDisk SD9SN8W2 (256 GB SSD)
+Operating System: Ubuntu 24.04.2 LTS
+Kernel Version: Linux 6.11.0-21-generic
+\end{minted}
+
+
+\subsection{Virtual Machine (VM) Setup}
+
+The cluster is built in Oracle VirtualBox (version 7.1.6r167084, avaiable on the official VirtualBox \href{https://www.virtualbox.org/}{website}) and it is made up by one master node \texttt{cluster01} and two worker nodes, namely \texttt{node01} and \texttt{node02}. The three of them are interconnected using an internal network and the workers inherited the Internet access through the master node, which act as DNS, DHCP and gateway of the cluster.
+
+\subsubsection{Template Machine Configuration}
+
+All VMs have identical specifications:
+\begin{minted}[fontsize=\small,breaklines,frame=lines]{bash}
+CPU: 2
+RAM: 2048 MB
+Disk: 20 GB
+Operating System: Ubuntu 22.04.5 live server (amd64)
+\end{minted}
+
+and they are built as clones of the same "template". After completing the installation of the OS in the template VMs, it has been configured using the following commands:
+
+\begin{minted}[fontsize=\small,breaklines,frame=lines]{bash}
+sudo apt update && sudo apt upgrade
+sudo apt install build-essential wget curl \
+# network service
+dnsmasq ssh iptables-persistent \
+# benchmarking tools
+iozone3 iperf3 netcat stress-ng sysbench openmpi-bin libopenmpi-dev hpcc \
+nof-common nfs-kernel-server
+# restarting the system
+sudo shutdown -h now
+\end{minted}
+
+The assessment tools are described in details in section {test-procedures???}. The template VM has been cloned to create \texttt{cluster01} (master) and \texttt{node01} (worker); the second worker has been cloned from the first one after its conficuration. 
+
+\textbf{Note:} when cloning the template VM, it is important to select the option "Reinitialize the MAC address of all network cards" in order to avoid conflicts in the network configuration.
+
+\subsubsection{Network Adapters Configuration}
+
+The network configuration is done using the VirtualBox GUI. Two network adapters are created:
+
+\begin{itemize}
+    \item \textbf{Adapter 1:} NAT, which allows the master to access the Internet through the host machine.
+    \item \textbf{Adapter 2:} Internal Network, which allows the VMs to communicate with each other. To each VM is assigned a dynamic IP address.
+\end{itemize}
+
+The port forwarding is configured in the VirtualBox GUI, so that the SSH service can be accessed from the host machine. The following ports are used:
+
+\begin{longtable}{|l|l|l|l|l|}
+\hline
+Name & Protocol & Host IP & Host Port & Guest Port \\
+\hline
+ssh & TCP & 127.0.0.1 & 3333 & 22 \\
+\hline
+\end{longtable}
+
+The SSH service is configured to allow the host machine to connect to the VMs using the following command (after starting the master VM), on the host machine:
+
+\begin{minted}[fontsize=\small,breaklines,frame=lines]{yaml}
+ssh-keygen
+cd ~/.ssh
+scp -P 3333 key_id.pub user01@127.0.0.1:~
+\end{minted}
+
+In this way it is possible to connect to the master VM using the following command:
+
+\begin{minted}[fontsize=\small,breaklines,frame=lines]{bash}
+ssh -p 3333 user01@127.0.0.1
+\end{minted}
+
+\subsubsection{Master Node Configuration}
+
+Since the node has been copied from the template, it has the same username, password but also the same hostname. In order to avoid conflicts, the hostname of the master node has been changed using the following command:
+
+\begin{minted}[fontsize=\small,breaklines,frame=lines]{bash}
+sudo nano /etc/hostname
+\end{minted}
+
+The hostname has been changed from `template` to `cluster01`. The same change has been done in the `/etc/hosts` file. 
+
+\begin{minted}[fontsize=\small,breaklines]{yaml}
+127.0.0.1 localhost
+192.168.0.1 master
+\end{minted}
+
+then the VM has been restarted in order to apply the changes.
+The master node is configured to act as DNS, DHCP and gateway of the cluster. The network interfaces available on the master node are:
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c|}
+        \hline
+        \textbf{Name} & \textbf{Type} \\
+        \hline
+        \texttt{enp0s3} & NAT \\
+        \texttt{enp0s8} & Internal Network \\
+        \hline
+    \end{tabular}
+\end{table}
+
+
+The configuration is done using the `netplan` tool. The configuration file is located in `/etc/netplan/50-cloud-init.yaml` and it is as follows:
+
+\begin{minted}[fontsize=\small,breaklines,frame=lines]{yaml}
+network:
+  version: 2
+  ethernets:
+    enp0s3:
+      dhcp4: true
+    enp0s8:
+      dhcp4: false
+      addresses: [192.168.0.1/28]
+      nameservers:
+        addresses: [192.168.0.1]
+\end{minted}
+
+Apply changes:
+
+\begin{minted}[fontsize=\small,breaklines,frame=lines]{bash}
+sudo netplan apply
+\end{minted}
+
+\textbf{Note:} Disabling cloud-init ensures your netplan changes remain after reboot. \texttt{sudo touch /etc/cloud/cloud-init.disabled}
+
+\paragraph{DNS Configuration (dnsmasq).}
+
+The DHCP server is configured using the \texttt{dnsmasq} tool. The configuration file is located in `/etc/dnsmasq.conf` and it is as follows:
+
+\begin{minted}[fontsize=\small,breaklines,frame=lines]{yaml}
+port=53
+bogus-priv
+strict-order
+interface=enp0s8
+listen-address=::1,127.0.0.1,192.168.0.1
+bind-interfaces
+log-queries
+log-dhcp
+dhcp-range=192.168.0.2,192.168.0.14,255.255.255.240,12h
+dhcp-option=option:dns-server,192.168.0.1
+dhcp-option=3
+\end{minted}
+
+in order to control the way `dnsmasq` interacts with `resolv.conf`, the following lines have been uncommented in the `/etc/default/dnsmasq` file:
+\begin{minted}{yaml}
+IGNORE_RESOLVCONF=yes
+DNSMASQ_EXCEPT="lo"
+\end{minted}
+the application of the changes is done using the following command:
+\begin{minted}[fontsize=\small,breaklines]{bash}
+sudo systemctl restart dnsmasq systemd-resolved
+\end{minted}
+
+\paragraph{Gateway Configuration.}
+
+
+The gateway is configured by creating the file `etc/sysctl.d/99-sysctl.conf` with the following content:
+
+\begin{minted}[fontsize=\small,breaklines]{yaml}
+net.ipv4.ip_forward=1
+\end{minted}
+Apply:
+\begin{minted}[fontsize=\small,breaklines]{bash}
+sudo sysctl --system
+\end{minted}
+To configure the IP tables, the following command is used:
+\begin{minted}[fontsize=\small,breaklines]{bash}
+sudo iptables -t nat -A POSTROUTING -o enp0s3 -j MASQUERADE
+sudo netfilter-persistent save
+\end{minted}
+
+\paragraph{Distributed File System (NFS).}
+
+A shared directory is created in the master node using the following command:
+
+\begin{minted}[fontsize=\small,breaklines]{bash}
+sudo mkdir /shared
+sudo chmod 777 /shared
+sudo nano /etc/exports
+\end{minted}
+The content of the `/etc/exports` file is as follows:
+
+\begin{minted}[fontsize=\small,breaklines]{yaml}
+/shared/ 192.168.0.0/255.255.255.240(rw,sync,no_root_squash,no_subtree_check)
+\end{minted}
+and then the NFS service is enabled and restarted using the following command:
+
+\begin{minted}[fontsize=\small,breaklines]{bash}
+sudo systemctl enable nfs-kernel-server
+sudo systemctl restart nfs-kernel-server
+\end{minted}
+
+\subsubsection{Worker Nodes Configuration}
+
+Analogously to the master node, the hostname of the worker nodes has been changed using the following command:
+
+\begin{minted}{bash}
+sudo nano /etc/hostname
+\end{minted}
+The hostname has been changed from `template` to `node01`. 
+
+\paragraph{Network Configuration}
+
+The network configuration file, located in `/etc/netplan/50-cloud-init.yaml`, it has been modified as follows:
+\begin{minted}[fontsize=\small,breaklines]{yaml}
+network:
+  ethernets:
+    enp0s8:
+      dhcp4: true
+      dhcp-identifier: mac
+      nameservers:
+        addresses: [192.168.0.1]
+      routes:
+        - to: 0.0.0.0/0
+          via: 192.168.0.1
+\end{minted}
+and applied using \texttt{sudo netplan apply}.
+The DNS server has been configured using:
+
+\begin{minted}{bash}
+sudo ln -fs /run/systemd/resolve/resolv.conf /etc/resolv.conf
+\end{minted}
+
+\paragraph{SSH setup.}
+In order to access the worker nodes through the master (not from the host, because of the internal network), the SSH service has been configured using the following command:
+\begin{minted}[fontsize=\small,breaklines]{bash}
+// from master node
+ssh-keygen -t rsa -b 4096
+ssh-copy-id node01
+\end{minted}
+
+after doing this it is possible to access the worker nodes using \texttt{ssh node01}
+
+\paragraph{Distributed File System Configuration.}
+To create a mount point for the shared directory, the following command is used:
+
+\begin{minted}[fontsize=\small,breaklines]{bash}
+sudo mkdir /shared
+\end{minted}
+then to Mount the shared directory from the master node to this folder:
+
+\begin{minted}[fontsize=\small,breaklines]{bash}
+sudo mount 192.168.0.1:/shared /shared
+\end{minted}
+and to make the mount persistent across reboots the package AutoFS is installed
+
+\begin{minted}[fontsize=\small,breaklines]{bash}
+sudo apt -y install autofs
+\end{minted}
+
+then in the `auto.master` configuration file the following line has been added in order to include the mount point
+
+\begin{minted}[fontsize=\small,breaklines]{bash}
+/- /etc/auto.mount
+\end{minted}
+In order to define the NFS mount the AutoFS configuration file (`auto.mount`) has been created and the following line has been added:
+\begin{minted}[fontsize=\small,breaklines]{yaml}
+/shared -fstype=nfs,rw  192.168.0.1:/shared
+\end{minted}
+and to apply changes
+\begin{minted}[fontsize=\small,breaklines]{bash}
+sudo systemctl restart autofs
+\end{minted}
+
+\paragraph{Clone the Worker Node.}
+The second worker node has been cloned from the first one after its configuration. The hostname of the second worker node has been changed in the usual way in `node02`. 
+
+\subsection{Container Setup}
+
+The Docker service (version \texttt{28.1.1}, build \texttt{4eba377}) has been installed according to the documentation available at Docker official \href{https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository}{website}.
+
+\subsubsection{Template Machine Configuration (Dockerfile)}
+
+The Dockerfile is used to create the image of the container. The content of the \texttt{Dockerfile} is as follows:
+
+
+\begin{minted}[fontsize=\small,breaklines]{dockerfile}
+FROM ubuntu:latest
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y \
+    build-essential wget curl \
+    openssh-server rsync iputils-ping \
+    dnsmasq ssh iptables-persistent \
+    iozone3 iperf3 netcat-openbsd \
+    stress-ng sysbench openmpi-bin libopenmpi-dev hpcc \
+    nfs-common nfs-kernel-server sudo \
+    && rm -rf /var/lib/apt/lists/*
+
+# Add the user
+RUN useradd -m -s /bin/bash user01 && echo "user01:0000" | chpasswd \
+    && echo "user01 ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
+# Create SSH directory and generate keys for user01
+RUN mkdir -p /home/user01/.ssh && \
+    ssh-keygen -t rsa -N '' -f /home/user01/.ssh/id_rsa && \
+    cat /home/user01/.ssh/id_rsa.pub > /home/user01/.ssh/authorized_keys && \
+    chmod 700 /home/user01/.ssh && \
+    chmod 600 /home/user01/.ssh/id_rsa /home/user01/.ssh/authorized_keys && \
+    chown -R user01:user01 /home/user01/.ssh
+
+# Copy the public key to a shared location (optional)
+RUN cp /home/user01/.ssh/id_rsa.pub /tmp/user01_rsa.pub
+
+# Create the directory for privilege separation
+RUN mkdir -p /run/sshd
+
+# Generating the host keys is important for SSH to work properly
+# The -A flag generates all the default keys
+RUN ssh-keygen -A
+
+# Expose the SSH port
+EXPOSE 22
+
+# Switch to user01
+USER user01
+WORKDIR /home/user01
+
+# Start the SSH server
+# The -D flag runs the server in the foreground
+# The -e flag enables logging to stderr
+CMD ["sudo", "/usr/sbin/sshd", "-D", "-e"]
+\end{minted}
+
+\subsubsection{Cluster Configuration (Docker Compose)}
+The cluster is built using Docker Compose. The \texttt{docker-compose.yml} file is as follows:
+
+\begin{minted}{yaml}
+services:
+  # Define the services (containers) that make up the cluster.
+
+  cluster01:
+    # Build the Docker image for this service using the Dockerfile in the current directory (.).
+    build: .
+    container_name: cluster01
+    
+    # Set the hostname inside the container. Used for communication using hostnames
+    hostname: cluster01
+
+    networks:
+      # Connect this container to the 'internal-net' defined below
+      internal-net:
+
+    deploy:
+      # Define resources (CPU = 2, memory limits = 2GB)
+      resources:
+        limits:
+          cpus: "2"
+          memory: 2G
+
+    # Map ports from the host machine to the container.
+    # allows to SSH into the container from the host using 'ssh -p 2220 user@host'.
+    ports:
+      - "2220:22"
+
+    # Mount shared volume into the container for sharing data.
+    volumes:
+      - shared-data:/shared
+
+  # Define the first worker/node service, configured similarly to cluster01.
+  node01:
+    build: .
+    container_name: node01
+    hostname: node01
+    # Specify that this container should be started after the 'cluster01' service
+    # to create a similar structure w.r.t. VMs
+    depends_on:
+      - cluster01
+    networks:
+      internal-net:
+    deploy:
+      resources:
+        limits:
+          cpus: "2"
+          memory: 2G
+    ports:
+      - "2221:22"
+    volumes:
+      - shared-data:/shared
+
+  # Define the second worker/node service, configured similarly.
+  node02:
+    build: .
+    container_name: node02
+    hostname: node02
+    depends_on:
+      - cluster01
+    networks:
+      internal-net:
+    deploy:
+      resources:
+        limits:
+          cpus: "2"
+          memory: 2G
+    ports:
+      # Map host port 2222 to port 22 inside this container.
+      - "2222:22"
+    volumes:
+      - shared-data:/shared
+
+# Define the networks used by the services.
+networks:
+  internal-net:
+    # 'bridge' is the default and creates a private internal network on the host machine, 
+    # that allows containers on this network to communicate with each other using their hostnames
+    driver: bridge
+
+# Define the (shared) volume
+volumes:
+  shared-data:
+    # Specify the volume driver. 'local' is the default and stores the volume
+    # data in a directory on the host machine managed by Docker.
+    driver: local    
+\end{minted}
+
+\textbf{Note:} there is a slight difference between the cluster configuration in VirtualBox an the one in Docker. In VirtualBox the master node has two network adapters, one for the Internet access and one for the internal network, while in Docker the cluster is built using a single network adapter. The master node has a public IP address (the host machine) and the worker nodes have private IP addresses (the internal network). The shared directory is mounted in each container using a volume. This difference however should not affect the performance of the chosen tests.
+
+\subsubsection{Starting the Cluster}
+The cluster is started using the following command:
+
+\begin{minted}[fontsize=\small,breaklines]{bash}
+docker-compose --build up -d
+\end{minted}
+This command will build the images and start the containers in detached mode. The containers can be accessed using the following command:
+\begin{minted}[fontsize=\small,breaklines]{bash}
+docker exec -it cluster01 bash
+# or
+ssh -p 2220 user01@localhost
+\end{minted}
+In order to give the user01 the permission to access the shared directory, the following command is used:
+
+\begin{minted}{bash}
+sudo chown -R user01:user01 /shared
+\end{minted}
+
+In order to access the each node from each other, the SSH service has been configured manually using , from `cluster01` for example:
+
+\begin{minted}{bash}
+ssh node01
+exit
+ssh node02
+exit
+\end{minted}
+
+this should be done at each restart of the containers, and analogously for the worker nodes in order to have all the nodes fully connected.
+
+Two useful commands to manage the docker containers are: \texttt{docker ps} to see all the running containers and \texttt{docker stop \$(docker ps -q)} to shut down all of them.
+
+
+
+
+\subsection{Testing Procedures}
+
+The following benchmarking tools have been used to perform the tests:
+
+\begin{itemize}
+    \item \textbf{HPC Challenge Benchmark}: A comprehensive suite of tests designed to measure the performance of high-performance computing systems. It evaluates both memory and computational performance using a variety of tests like HPL (High Performance Linpack), DGEMM, FFT, and STREAM.\footnote{\url{https://hpcchallenge.org/hpcc/faq/index_print.html}}
+    \item \texttt{stress-ng}: A tool for stress-testing CPUs, memory, I/O, and other system components. It’s useful for validating system stability under heavy load by running various stressors in parallel.
+    \item \texttt{sysbench}: A modular benchmarking tool for evaluating system parameters such as CPU, memory and disk I/O.
+    \item \texttt{iozone}: A filesystem benchmark tool used to measure I/O performance across various operations such as read, write, re-read, and random access.
+    \item \texttt{iperf}: A network testing tool used to measure bandwidth and throughput between two endpoints over TCP or UDP. 
+\end{itemize}
+
+The measurements were performed multiple times in each environment -- VMs, containers and on the host whenever possible --  in order to have also a measure of the variability of each benchmark. Since every environment runs the same operating system, the same script have been used across all the environment; moreover, during each measurement process has been ensured that no other heavy processes were running on the host machine during the tests.\\
+
+\par Since we're testing the cluster environment and most of the tests need passwordless ssh protocol (from master to workers) is a good practice to run the following command before running the tests (both no VMs and containers) to be sure that everything works fine:
+
+\begin{minted}{bash}
+mpirun -np 4 -hostfile hosts hostname
+\end{minted}
+
+and the expected output should be:
+
+\begin{minted}{bash}
+node01
+node01
+node02
+node02
+\end{minted}
+
+\subsubsection{HPCC}
+All the tests have been runned in the \texttt{ /shared} folder, the first step is to locate the \texttt{hpcc} executable file and to locate it (and all the relative configurations file) in the former directory using:
+
+\begin{minted}{bash}
+which hpcc
+ cp -r /path/to/hpcc /shared/hpcc
+\end{minted}
+
+The configuration file for the HPCC, namely \texttt{hpccinf.txt} has been obtained consulting the \href{https://www.advancedclustering.com/act_kb/tune-hpl-dat-file/}{website} reccomended during the lessons.
+
+\begin{minted}[fontsize=\small,breaklines]{bash}
+HPLinpack benchmark input file
+Innovative Computing Laboratory, University of Tennessee
+HPL.out      output file name (if any) 
+6            device out (6=stdout,7=stderr,file)
+1            # of problems sizes (N)
+20352         Ns
+1            # of NBs
+192           NBs
+0            PMAP process mapping (0=Row-,1=Column-major)
+1            # of process grids (P x Q)
+2            Ps
+2            Qs
+16.0         threshold
+1            # of panel fact
+2            PFACTs (0=left, 1=Crout, 2=Right)
+1            # of recursive stopping criterium
+4            NBMINs (>= 1)
+1            # of panels in recursion
+2            NDIVs
+1            # of recursive panel fact.
+1            RFACTs (0=left, 1=Crout, 2=Right)
+1            # of broadcast
+1            BCASTs (0=1rg,1=1rM,2=2rg,3=2rM,4=Lng,5=LnM)
+1            # of lookahead depth
+1            DEPTHs (>=0)
+2            SWAP (0=bin-exch,1=long,2=mix)
+64           swapping threshold
+0            L1 in (0=transposed,1=no-transposed) form
+0            U  in (0=transposed,1=no-transposed) form
+1            Equilibration (0=no,1=yes)
+8            memory alignment in double (> 0)
+##### This line (no. 32) is ignored (it serves as a separator). ######
+0                               Number of additional problem sizes for PTRANS
+1200 10000 30000                values of N
+0                               number of additional blocking sizes for PTRANS
+40 9 8 13 13 20 16 32 64        values of NB
+\end{minted}
+
+then the file \texttt{hosts} has been created:
+
+\begin{minted}{bash}
+node01 slots=2
+node02 slots=2
+\end{minted}
+
+ defines the nodes in which the hpcc benchmark will be executed in a distributed environment, specifying also the number of slots for each node, \textit{, i.e.}, the number of processors (logical or physical) available for the parallel execution of the MPI processes. The test has been repeated three times using the command:
+ 
+\begin{minted}[fontsize=\small,breaklines]{bash}
+mpirun -np 4 -hostfile hosts hpcc
+\end{minted}
+
+\subsubsection{stress-ng}
+Bash script for the \texttt{stress-ng} test:
+
+\begin{minted}[fontsize=\small,breaklines]{bash}
+#!/bin/bash
+
+# Number of repetitions
+REPEAT=5
+
+# Hostfile location
+HOSTFILE="hosts"
+
+# Timeout for each test
+TIMEOUT="60s"
+
+# Loop over 5 repetitions
+for i in $(seq 1 $REPEAT); do
+    echo "Running CPU test iteration $i..."
+    mpirun -np 4 -hostfile $HOSTFILE stress-ng --cpu 1 --timeout $TIMEOUT --metrics-brief \
+        2>&1 | tee "stress_ng_cpu_run_${i}.txt"
+
+    echo "Running VM test iteration $i..."
+    mpirun -np 4 -hostfile $HOSTFILE stress-ng --vm 1 --vm-bytes 512M --timeout $TIMEOUT --metrics-brief \
+        2>&1 | tee "stress_ng_vm_run_${i}.txt"
+    
+    echo "Finished iteration $i"
+    echo "------------------------"
+done
+
+echo "All tests completed."
+\end{minted}
+
+the bash script has been saved as \texttt{run\_stress\_tests.sh} and then executed using
+
+\begin{minted}{bash}
+chmod +x run_stress_tests.sh
+./run_stress_tests.sh
+\end{minted}
+
+\subsubsection{sysbench}
+Bash script for the \texttt{sysbench} test:
+
+\begin{minted}[fontsize=\small,breaklines]{bash}
+#!/bin/bash
+
+# Number of iterations
+ITERATIONS=5
+
+# Run CPU test 5 times
+echo "Running CPU test $ITERATIONS times..."
+for i in $(seq 1 $ITERATIONS); do
+    echo "CPU Test Run #$i"
+    mpirun -np 4 -hostfile hosts sysbench --test=cpu --cpu-max-prime=20000 run | tee "sysbench_cpu_result_$i.txt"
+done
+
+# Run Memory test 5 times
+echo "Running Memory test $ITERATIONS times..."
+for i in $(seq 1 $ITERATIONS); do
+    echo "Memory Test Run #$i"
+    mpirun -np 4 -hostfile hosts sysbench --test=memory --memory-total-size=10G run | tee "sysbench_mem_result_$i.txt"
+done
+
+echo "All tests completed."
+\end{minted}
+
+it has been saved as \texttt{run\_sysbench\_tests.sh} and then executed analogously to the previous test.
+
+\subsubsection{iozone}
+
+\paragraph{Local filesystem.} In order to test the I/O of the local filesystem, from the \texttt{/shared} directory the following command has been executed
+
+\begin{minted}{bash}
+iozone -a -R -O | tee iozone_results.txt
+\end{minted}
+
+the flag \texttt{-a} runs automatic mode, testing many combinations of file sizes and record sizes; \texttt{-R} Outputs results in Excel spreadsheet format; \texttt{-O} Adds OPS (operations per second) to the output.
+
+\paragraph{Shared filesystem.} To test the shared filesystem, an empty file has been created in the \texttt{/shared/iozone} directory. This is the target file Iozone will use for its I/O benchmarking.
+
+\begin{minted}{bash}
+touch /shared/iozone/testfile
+\end{minted}
+
+Then the \texttt{machines.txt} has been created, containing all the nodes that will participate in the distributed Iozone test, and tells Iozone where it and the shared path are located:
+
+\begin{minted}{bash}
+node01 /shared/iozone /usr/bin/iozone 
+node02 /shared/iozone /usr/bin/iozone
+\end{minted}
+
+The test has been runned using:
+
+\begin{minted}{bash}
+export ssh=rsh
+iozone -+m /shared/iozone/machines.txt -f /shared/iozone/testfile -a -R -O | tee iozone_shared_results.txt
+\end{minted}
+
+\subsubsection{iperf}
+
+The network test has been performed several times, in order to test all the possible pair of connection between nodes, \textit{i.e.}, (\texttt{cluster01}, \texttt{node01}), (\texttt{cluster01}, \texttt{node02}), (\texttt{node01}, \texttt{node02}).
+On the server node:
+
+\begin{minted}{bash}
+sudo killall iperf3 # clean up before running a test
+iperf3 -s | tee iperf3_results.txt
+\end{minted}
+the flag \texttt{-s} puts the program into \textbf{server mode}. On the client node:
+
+\begin{minted}{bash}
+iperf3 -c cluster01 # TCP test (upload)
+iperf3 -c cluster01 -R # TCP Reverse test (download)
+iperf3 -c cluster01 -u # UDP test (upload)
+\end{minted}
+
+the flag \texttt{-c} puts the program into \textbf{client mode}. With this commands are tested two core network communication protocols, namely TCP (upload and download) and UDP (upload).
