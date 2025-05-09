@@ -106,7 +106,7 @@ Single       & 25.56 ± 2.23 & 44.71 ± 9.66 & 46.89 ± 2.46 \\
 \textbf{PTRANS (GB/s)} & 0.196 ± 0.014 & 1.181 ± 0.239 & 1.495 ± 0.019 \\
 \bottomrule
 \end{tabular}
-\caption{Memory Bandwidth Benchmarks: VM vs Container vs Host (GB/s)}
+\caption{Memory performance metrics for VM, Container, and Host environments. The values are reported as mean ± standard deviation, calculated over three measurements ($n = 3$).}
 \end{table}
 
 \begin{figure}[H]
@@ -146,14 +146,14 @@ RandomlyOrderedRing   & 0.120 ± 0.014 & 1.857 ± 0.020 & 2.971 ± 0.073 \\
 \bottomrule
 \end{tabular}
 \label{tab:pingpong}
-\caption{Latency and Bandwidth Benchmarks: VM vs Container vs Host}
+\caption{Latency and Bandwidth Benchmark: VM vs Container vs Host. The values are reported as mean ± standard deviation, calculated over three measurements ($n = 3$).}
 
 \end{table}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\linewidth]{assets/hpcc_latency_performance.png}
-    \caption{Note the log scale}
+    \caption{Latency Benchmarks: VM vs Container vs Host. The y-axis is in log scale to better visualize the differences between the environments.}
     \label{fig:hpcc_latency_performance}
 \end{figure}
 
@@ -182,7 +182,7 @@ The large difference between Real Time and Usr+Sys Time for the Container and Ho
     Usr+Sys Time & $41.434 \pm 0.952$ & $66.543 \pm 2.954$ & $62.687 \pm 3.254$ \\
     \bottomrule
     \end{tabular}
-    \caption{kilo BogoOps/s for each benchmark, number of repetition of the experiment $n=5$}
+    \caption{CPU and Memory performance metrics for VM, Container, and Host environments. The values are reported as mean ± standard deviation, calculated over five measurements ($n = 5$).}
     \label{tab:stress-ng}
 \end{table}
 \subsection{sysbench}
@@ -210,7 +210,7 @@ Memory Performance: This is where the significant differences lie. The Container
     \bottomrule
 
     \end{tabular}
-    \caption{Caption}
+    \caption{CPU and Memory performance metrics for VM, Container, and Host environments. The values are reported as mean ± standard deviation, calculated over five measurements ($n = 5$).}
     \label{tab:sysbench}
 \end{table}
 
@@ -267,14 +267,11 @@ For clarity the plots of the host are not reported(?) but can be found here.
 
 \subsection{iperf}
 
-iperf is a standard tool used to measure network performance, specifically throughput (bandwidth), latency, and jitter. These results directly assess the quality of the network connection between the nodes in your VM cluster versus the nodes in the Container cluster.
+These results directly assess the quality of the network connection between the nodes in the VM cluster versus the nodes in the Container cluster. The TCP results show incredibly high bandwidth in the Docker Container environment, averaging around $42-43$ Gb/s for both upload and download. The VirtualBox network provides much lower TCP bandwidth, averaging around $2.7-2.8$ Gb/s for both upload and download, so it is approximately 15 to 16 times slower than the container TCP network.
 
-TCP Performance (Upload and Download): 
-The bandwidth (Bitrate) is the most striking difference. The Container environment achieves a TCP bitrate of approximately 4.9 Gb/s (both upload and download), while the VM environment is limited to a mere 0.30 Gb/s. This means the network link between the two nodes in the Docker cluster is about 16 to 17 times faster for sustained TCP data transfer than the virtualized network link between the two nodes in the VirtualBox cluster. The Containers are effectively utilizing a much higher bandwidth pipe than the VMs. The relative standard deviations (±) show that the container network performance is not only much higher but also more consistent than the VM network performance.
+The UDP Bitrate (successfully received) is 1.61 Gb/s in Containers compared to 0.44 Gb/s in VMs. The Container network can handle a higher UDP rate. Packet Loss is a critical distinction: the VM network shows a very high average packet loss rate of 15.85\%. This means over 15\% of UDP packets are being dropped at the $\sim 0.44 $Gb/s rate. Moreover, the high standard deviation for VM UDP packet loss (±15.99) indicates highly unstable packet delivery in the VM network. The Container network shows a negligible average packet loss rate of 0.01\% at the higher $\sim 1.61$ Gb/s rate. 
 
-The iperf results provide the crucial evidence to explain the performance differences observed in benchmarks that rely on inter-node communication. The iperf results definitively confirm the statement that "VMs rely on virtualized NICs with limited performance." The measured TCP bandwidth of 0.30 Gb/s is a severe bottleneck for any distributed application or benchmark (like MPI in HPCC or StarSTREAM) that attempts to send data between the VM nodes. This low network speed directly limits how fast data can be moved between nodes, regardless of how fast the CPUs can process it or how fast local memory is.
-
-The much higher network bandwidth (4.9 Gb/s) and lower jitter in the Container environment explain why the Container cluster would outperform the VM cluster on distributed benchmarks. With a faster and more stable network, the overhead of inter-node communication is significantly reduced, allowing the nodes to exchange data more efficiently and complete the distributed tasks (like those in StarSTREAM or HPCC's MPI components) faster.
+This dramatic difference in the underlying network speed and reliability between the two environments is the overwhelming factor explaining why any benchmark that requires significant data exchange between nodes (like StarSTREAM or MPI components of HPCC) would perform much better on the Docker Container cluster than on the VirtualBox VM cluster. This low network speed directly limits how fast data can be moved between nodes, regardless of how fast the CPUs can process it or how fast local memory is. The VM network's limitations in both bandwidth and stability directly constrain the performance of distributed workloads.
 
 \begin{table}[H]
     \centering
@@ -283,19 +280,19 @@ The much higher network bandwidth (4.9 Gb/s) and lower jitter in the Container e
     \textbf{Benchmark} & \textbf{VM} & \textbf{Container} \\
     \midrule
     \textbf{TCP upload} & & \\
-    Transfer (GB) & $2.66 \pm 0.56$ & $42.48 \pm 6.75$ \\
-    Bitrate (Gb/s) & $0.30 \pm 0.10$ & $4.91 \pm 1.11$ \\
+    Bitrate (Gb/s) & $2.66 \pm 0.56$ & $42.48 \pm 6.75$ \\
+    Transfer (GB) & $0.30 \pm 0.10$ & $4.91 \pm 1.11$ \\
     \midrule
     \textbf{TCP download} & & \\
-    Transfer (GB) & $2.84 \pm 1.28$ & $43.04 \pm 1.66$ \\
-    Bitrate (Gb/s) & $0.30 \pm 0.10$ & $4.97 \pm 0.81$ \\
+    Bitrate (Gb/s) & $2.84 \pm 1.28$ & $43.04 \pm 1.66$ \\
+    Transfer (GB) & $0.30 \pm 0.10$ & $4.97 \pm 0.81$ \\
     \midrule
     \textbf{UDP} & & \\
-    Transfer (MB) & $0.12 \pm 0.02$ & $0.13 \pm 0.00$ \\
-    Bitrate (Mb/s) & $1.04 \pm 0.08$ & $1.05 \pm 0.00$ \\
-    Jitter (ms) & $1.60 \pm 0.74$ & $0.15 \pm 0.08$ \\
+    Bitrate (Gb/s) & $0.44 \pm 0.19$ & $1.61 \pm 0.31$ \\
+    Transfer (GB) & $0.05 \pm 0.02$ & $0.18 \pm 0.06$ \\
+    Lost Datagrams (\%) & $15.85 \pm 15.99$ & $0.01 \pm 0.04$ \\
     \bottomrule
     \end{tabular}
-    \caption{Caption}
+    \caption{Iperf results for VM and Container, showing TCP and UDP performance metrics. The values are reported as mean ± standard deviation, calculated over four measurements ($n = 4$).}
     \label{tab:iperf}
 \end{table}

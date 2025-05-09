@@ -46,8 +46,8 @@ def extract_and_write_csv(input_path, output_path):
                     writer.writerow([current_format] + data)
 
 # Define input and output file paths
-input_file = 'iperf3_s02c01.txt'
-output_file = 'iperf3_s02c01.csv'
+input_file = 'udp_results.txt'
+output_file = 'udp_results.csv'
 
 # Run the script
 extract_and_write_csv(input_file, output_file)

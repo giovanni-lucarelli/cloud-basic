@@ -428,7 +428,7 @@ volumes:
 The cluster is started using the following command:
 
 \begin{minted}[fontsize=\small,breaklines]{bash}
-docker-compose --build up -d
+docker compose up -d --build
 \end{minted}
 This command will build the images and start the containers in detached mode. The containers can be accessed using the following command:
 \begin{minted}[fontsize=\small,breaklines]{bash}
@@ -660,7 +660,7 @@ the flag \texttt{-s} puts the program into \textbf{server mode}. On the client n
 \begin{minted}{bash}
 iperf3 -c cluster01 # TCP test (upload)
 iperf3 -c cluster01 -R # TCP Reverse test (download)
-iperf3 -c cluster01 -u # UDP test (upload)
+iperf3 -c cluster01 -u -b 3G # UDP test (upload)
 \end{minted}
 
-the flag \texttt{-c} puts the program into \textbf{client mode}. With this commands are tested two core network communication protocols, namely TCP (upload and download) and UDP (upload).
+the flag \texttt{-c} puts the program into \textbf{client mode}. With this commands are tested two core network communication protocols, namely TCP (upload and download) and UDP (upload). The flag \texttt{-b} is used to set the target bandwidth, the default value is 1 Mbit/sec for UDP and unlimited for TCP. The value of 3 Gbit/sec is used to test the maximum bandwidth of the network, after some trials to find the value in order to saturate the channel.
