@@ -1,18 +1,14 @@
 \section{Results and Discussion}
 
-The full resoults for each test can be found in the folder \href{https://github.com/giovanni-lucarelli/cloud-basic/tree/main/results}{results} in the github repository of the project. Here are briefly discussed only the main ones.
-
 \subsection{HPCC}
 
-The \texttt{hpcc} test has been repeated three times for each environment; here hare reported the mean value ($\pm$ standard deviation) for the main benchmarks, divided by type of metrics.
+As already mentioned before, the \texttt{hpcc} test consists in a large number of benchmarks; the full resoults can be found in the folder \href{https://github.com/giovanni-lucarelli/cloud-basic/tree/main/results}{results} in the github repository of the project. For clarity sake here are reported and discussed only the principal ones, divided according to the hardware stressed.
 
 \subsubsection{Compute Performance}
 
-HPL, DGEMM, and FFT are standard benchmarks or computational kernels used to measure the performance of high-performance computing (HPC) systems, especially with respect to floating-point computation and linear algebra workloads. From the results in table \ref{tab:benchmark_performance} we can see that the container consistently leads or ties with host whereas VMs trails behind in most metrics.
-Note in particular the huge difference in performance of the VMs in the MPIFFT. This benchmark requires frequent communication across MPI ranks — often doing all-to-all exchanges for transposing and redistributing FFT data. Other than the capability in crunching numbers this stresses also: Network latency and bandwidth, MPI transport efficiency,  Inter-process communication mechanisms.
+This section evaluates the computational performance of the system across different environments. Specifically, the benchmark reported are: HPL (High-Performance Linpack), DGEMM (Double-precision General Matrix Multiply), and FFT (Fast Fourier Transform). All of them aim to assess floating-point computation in linear algebra and numerical problems. As presented in Table \ref{tab:benchmark_performance} and in Figure \ref{fig:hpcc_compute_performance}, the results consistently show that the container environment performs comparably to or exceeds the host environment across most metrics, while the virtual machine (VM) configuration trails behind.
 
-The critical difference in the three environment is that, whereas the MPI Communication Mechanism of the host is the shared memory, the container uses TCP network protocol but with low overhead and 
-VMs use	TCP over virtual Network Interface Controllers (NICs) that returns very poor latency and bandwidth. MPI runs over virtualized network interfaces, causing massive latency. The ping-pong and iperf tests confirm this as shown in the results in table \ref{tab:pingpong} and \ref{tab:iperf}.
+A notable observation is the significant performance disparity exhibited by the VMs in the MPI FFT benchmark. Parallel FFT algorithms are inherently communication-intensive, frequently requiring extensive inter-rank communication, typically involving all-to-all exchanges for data transposition and redistribution. Consequently, beyond raw floating-point capability, this workload heavily stresses: network latency and bandwidth and MPI transport efficiency. A critical distinction among the three environments lies in their respective MPI communication mechanisms. On the host system, MPI communication between processes on the same node primarily utilizes highly efficient shared memory. In contrast, the container environment employs the TCP network protocol for inter-process communication, albeit potentially with lower overhead compared to VMs due to reduced virtualization layers. The VM environment, however, relies on TCP communication routed through virtual Network Interface Controllers (vNICs). This virtualization layer for networking introduces substantial overhead, resulting in significantly poorer latency and bandwidth characteristics for inter-process communication within and between VMs. These detrimental effects of virtualized networking on communication performance are clearly corroborated by the results of the ping-pong and iperf network benchmarks, presented in Table \ref{tab:pingpong} and Table \ref{tab:iperf}, respectively, which demonstrate substantially higher latency and lower bandwidth for the VM environment.
 
 \begin{table}[htbp]
 \centering
@@ -38,45 +34,51 @@ MPIFFT       & 1.231 ± 0.064 & 3.673 ± 0.124 & 4.042 ± 0.014 \\
 \label{tab:benchmark_performance}
 \end{table}
 
-\begin{figure}[H]
+\begin{figure}[htbp]
     \centering
     \includegraphics[width=0.8\linewidth]{assets/hpcc_compute_performance.png}
-    \caption{Caption}
+    \caption{Compute Performance Benchmarks: VM (orange) vs Container (blue) vs Host (green). All the benchmarks are reported in Gflops.}
     \label{fig:hpcc_compute_performance}
 \end{figure}
 
 \subsubsection{Memory Benchmarks}
+The main memory benchmark results are presented in Table \ref{tab:memory_performance_hpcc} and Figure \ref{fig:hpcc_memory_performance}. The benchmarks include SingleSTREAM, StarSTREAM, RandomAccess, and PTRANS. Each benchmark is designed to evaluate different aspects of memory performance, including bandwidth, latency, and the efficiency of memory access patterns.
 
-The STREAM benchmark provides a measure of the memory bandwidth (GB/s) by testing simple vector operations like Copy, Scale, Add, and Triad. \textbf{Single} on a single processor node and \textbf{Star} Measures aggregate memory bandwidth across the system using multiple nodes.
+\paragraph{STREAM Memory Bandwidth}
 
-Memory Bandwidth (STREAM): Host and container perform similarly, with VM being the weakest.
-A note on the SingleSTREAM, we can see that SingleSTREAM reach a good amount of the nominal memory bandwidth in all the environment.
+The STREAM benchmark measures sustainable memory bandwidth (typically reported in GB/s) through simple vector operations: \textit{Copy}, \textit{Scale}, \textit{Add}, and \textit{Triad}. The benchmark was executed in two configurations: SingleSTREAM, assessing memory performance on a single compute node, and StarSTREAM, which aggregates memory bandwidth across multiple nodes in a distributed setting.
 
-Looking at the nominal performance. By running the command: \texttt{sudo dmidecode --type memory}:
+In SingleSTREAM evaluations, the host and container environments demonstrated comparable memory bandwidth, while the virtual machine (VM) configuration consistently exhibited lower performance. Despite the VM's relative underperformance, all environments achieved a substantial percentage of the theoretical maximum bandwidth, indicating generally efficient operation of the local memory subsystems, with the exception of the VM, which is subject to certain virtualization-induced memory overheads.
+
+To determine the nominal memory bandwidth of the system, hardware information was queried using the command \texttt{sudo dmidecode --type memory}. The relevant output is presented below:
 
 \begin{minted}{text}
 Configured Memory Speed: 1867 MT/s
-Number of memory bank: 2
+Number of memory banks: 2
 \end{minted}
 
+Based on this information, the theoretical peak memory bandwidth ($\text{BW}_\text{nominal}$) can be calculated as follows:
+
 \begin{equation*}
-    \text{BW}_\text{nom} = 1.867 \frac{\text{GT}}{\text{s}}\times 8\,\frac{\text{B}}{\text{T}}\times 2 = 29.872 \frac{\text{GB}}{\text{s}}
+\text{BW}_\text{nominal} = 1.867 \frac{\text{GT}}{\text{s}} \times 8 \frac{\text{B}}{\text{T}} \times 2 = 29.872 \frac{\text{GB}}{\text{s}}
 \end{equation*}
 
-the Copy benchmark\footnote{in particular the Copy benchmark because it is the more optimized by the compiler with an assemply written function!} is pretty satisfiyng for all the environments: vm 75\%, container 0.81\%, host 0.78\% ot the nominal bandwidth. 
+Among the STREAM operations, the \textit{Copy} operation -- being highly optimized by compilers and frequently implemented using assembly code -- provides the most direct measure of effective memory throughput. The observed throughput for the \textit{Copy} operation was approximately 75\% of the nominal bandwidth for the VM, 81\% for the container, and 78\% for the host. These results indicate generally satisfactory performance across all environments.
 
-StarSTREAM, running across the two nodes in the VM and Container clusters, is measuring a distributed memory benchmark. This involves significant inter-node communication to exchange data required by the benchmark kernels. The bandwidth in this scenario is not limited by the speed of local memory access but by the speed and latency of the network (or virtual network) connecting the two nodes. The process of sending and receiving data over the network, along with any necessary synchronization and coordination between the nodes, introduces substantial overhead. This overhead drastically reduces the effective memory bandwidth seen by the application, resulting in the much lower figures (around $20\%$ of nominal).
+In the \textbf{StarSTREAM} benchmark the container environment again surpassed the VM setup. As data exchange between nodes necessitates significant network communication and synchronization, the effective memory bandwidth becomes constrained also by network bandwidth and latency rather than only local memory speed. Consequently, performance declines significantly compared to SingleSTREAM, with the observed bandwidth reaching only approximately 20\% of the nominal maximum. This performance degradation is particularly pronounced in the VM cluster, probably due to the overhead associated with the virtualized of the network interface.
+
+\paragraph{RandomAccess (RA) Benchmark}
+
+The RandomAccess benchmark quantifies the rate of random memory updates, expressed in mega updates per second (MUP/s). Unlike STREAM, which focuses on sequential memory access patterns, RandomAccess evaluates the system's efficiency in handling numerous small, non-contiguous memory accesses. 
+
+In the MPI implementation of this benchmark, the host environment exhibited disproportionately high performance. This can be interpreted analogously to the case of MPI FFT and so can be attributed to the utilization of shared memory for inter-process communication on the host, which is substantially more efficient than the network-based communication employed in the VM and container environments.
+
+\paragraph{PTRANS Benchmark}
+
+The PTRANS benchmark assesses global memory bandwidth in parallel computing systems by measuring the rate at which large matrices can be transposed across processor nodes. It effectively gauges the system's capability to efficiently move large volumes of data between memory spaces on different nodes. Results from this benchmark further reinforce the significant impact of network performance on distributed memory operations. The container cluster demonstrated strong performance, whereas the VM cluster exhibited severe limitations, likely attributable to the same network bottlenecks identified in the StarSTREAM and MPI benchmarks. As shown later we will see that the main bottleneck of the virtual machines environment lies exactly in the network.
 
 
-The RandomAccess benchmark measures the rate of random updates to memory (UP/s). It's designed to stress the memory system's ability to handle a large number of small, non-contiguous memory accesses. This is different from STREAM, which focuses on large, sequential data transfers. 
-The MPI Random Access has an interesting behaviour: the Host results are largely out of scale, this can be interpreted thinking at the fact that in vms and containers the mpi protocol is managed through the network adapter and so using the TCP protocol, where as in the host we are in the context of shared memory. MPI processes can use shared memory for inter-process communication, which is orders of magnitude faster than network-based communication This is backed up by the ping pong latency benchmarks. for the vms the latency is much higher, consistent with virtual NIC and TCP stack overhead.
-
-PTRANS (Parallel Matrix Transpose) is designed to measure the global network bandwidth (GB/s) in a parallel computing system. Specifically, it assesses the rate at which large arrays of data can be transferred between the memories of different processors in the system.
-This shows huge performance difference expecially the VMs compared to the other environment, probably due to the already mentioned network bottleneck.
-
-
-
-\begin{table}[H]
+\begin{table}[htbt]
 \centering
 \renewcommand{\arraystretch}{1.2}
 \begin{tabular}{lccc}
@@ -107,23 +109,23 @@ Single       & 25.56 ± 2.23 & 44.71 ± 9.66 & 46.89 ± 2.46 \\
 \bottomrule
 \end{tabular}
 \caption{Memory performance metrics for VM, Container, and Host environments. The values are reported as mean ± standard deviation, calculated over three measurements ($n = 3$).}
+\label{tab:memory_performance_hpcc}
 \end{table}
 
-\begin{figure}[H]
+\begin{figure}[htbp]
     \centering
     \includegraphics[width=0.8\linewidth]{assets/hpcc_memory_performance.png}
-    \caption{Caption}
+    \caption{Memory Random Access Benchmarks: VM (orange) vs Container (blue) vs Host (green). All the benchmarks are reported in mega updates per second (MUP/s).}
     \label{fig:hpcc_memory_performance}
 \end{figure}
 
 \subsubsection{Latency and Bandwidth}
 
-The ping-pong benchmark is a fundamental test used to measure the performance of a communication channel or link between two endpoints.
-In a cluster environment, a ping-pong benchmark is typically run between two different nodes. On a single host machine, a ping-pong benchmark is typically run between two processes or threads running on that same machine. For this reason here the Host results are not a proper baseline to compare the VMs and container results.
+The ping-pong benchmark is a fundamental test used to measure the performance of a communication channel or link between two endpoints. In a cluster environment, a ping-pong benchmark is typically run between two different nodes. On a single host machine, a ping-pong benchmark is typically run between two processes or threads running on that same machine. For this reason here the Host results are not a proper baseline to compare the VMs and container results.
 
-From the table \ref{tab:pingpong} we can see that VM introduces massive latency penalties with respect to the Containers. Analogously, for the bandwidth the containers show the best performances.
+From the table \ref{tab:pingpong} we can see that VM introduces massive latency penalties with respect to the Containers. Analogously, for the bandwidth the containers show the best performances. 
 
-\begin{table}[H]
+\begin{table}[htbp]
 \centering
 \renewcommand{\arraystretch}{1.2}
 \begin{tabular}{lccc}
@@ -145,29 +147,26 @@ NaturallyOrderedRing  & 0.145 ± 0.020 & 2.064 ± 0.115 & 3.101 ± 0.021 \\
 RandomlyOrderedRing   & 0.120 ± 0.014 & 1.857 ± 0.020 & 2.971 ± 0.073 \\
 \bottomrule
 \end{tabular}
-\label{tab:pingpong}
 \caption{Latency and Bandwidth Benchmark: VM vs Container vs Host. The values are reported as mean ± standard deviation, calculated over three measurements ($n = 3$).}
-
+\label{tab:pingpong}
 \end{table}
 
-\begin{figure}[H]
+\begin{figure}[htbp]
     \centering
     \includegraphics[width=0.8\linewidth]{assets/hpcc_latency_performance.png}
-    \caption{Latency Benchmarks: VM vs Container vs Host. The y-axis is in log scale to better visualize the differences between the environments.}
+    \caption{Latency and Bandwidth Benchmarks: VM (orange) vs Container (blue) vs Host (green). All the latencies are reported in microseconds (µs) and y-axis is in log scale.}
     \label{fig:hpcc_latency_performance}
 \end{figure}
 
 \subsection{stress-ng}
 
-From the stress-ng documentation\footnote{\url{https://wiki.ubuntu.com/Kernel/Reference/stress-ng}}: `` Stress-ng measures a stress test ``throughput" using ``bogus operations per second". The size of a bogo op depends on the stressor being run, and are not comparable between different stressors.''
+According to the stress-ng documentation\footnote{\url{https://wiki.ubuntu.com/Kernel/Reference/stress-ng}}, the tool reports a stress test's ``throughput" in terms of bogus operations per second (bogo-ops). As highlited in the documentation, it is important to point out that the size and nature of a bogo-op vary depending on the specific stressor being used, making throughput values incomparable across different stressors.
 
-Regarding the cpu stressor, host and container shows nearly identical performances, the light variability is negligible and is inside the variability of the tests. VMs throughput performances are significantly lower, about the $31\%$ lower than host/container. This is probably due to the virtual overhead introduced by the hypervisor.
+For the CPU stressor, both the host and the container environments demonstrate nearly identical performance. The minor variability observed between them falls well within the expected margin of experimental variation. In contrast, the VM environment exhibits significantly lower throughput -- approximately 31\% lower than that of the host and container. This degradation in performance is likely attributable to the overhead introduced by the virtualization layer of the hypervisor. A similar trend is observed in the memory stressor results. The VM configuration again yields the lowest performance, falling significantly behind both the host and the container environments, which perform comparably to one another.
 
-Similiarly to the cpu, for the memory stressor the VM results are again the lowest, significantly lower than host and container, again similiar. 
-Real Time (Wall-Clock Time) is the total time that elapsed from when the benchmark started until it finished, as measured by a clock on the wall, Usr+Sys Time (CPU Time) is the total amount of CPU time that the benchmark process spent executing code.
-The large difference between Real Time and Usr+Sys Time for the Container and Host in the Memory VM stressor is the expected result of running a multi-threaded benchmark effectively utilizing multiple CPU cores. The absence of this large difference in the VM environment highlights that the virtualization layer in VirtualBox introduces overhead or inefficiencies that hinder the effective parallel execution and CPU utilization of this specific memory-intensive multi-threaded workload compared to running it directly on the host or within a Docker container.
+For this test, two time metrics are of particular interest: Real Time (or wall-clock time), which measures the total elapsed time for the benchmark from start to finish, and Usr+Sys Time (CPU time), which represents the cumulative time the process spent executing in user and system modes. In the host and container environments, the memory stressor shows a substantial gap between Real Time and CPU Time, which is expected for a well-parallelized, multi-threaded workload that effectively utilizes multiple CPU cores. However, this disparity is notably absent in the VM environment, suggesting that the virtualization layer in VirtualBox impairs parallel execution and CPU resource utilization. This inefficiency results in reduced performance for memory-intensive, multi-threaded workloads when run in the VM as compared to on a native host or within a container.
 
-\begin{table}[H]
+\begin{table}[htbp]
     \centering
     \begin{tabular}{lccc}
     \toprule
@@ -185,12 +184,15 @@ The large difference between Real Time and Usr+Sys Time for the Container and Ho
     \caption{CPU and Memory performance metrics for VM, Container, and Host environments. The values are reported as mean ± standard deviation, calculated over five measurements ($n = 5$).}
     \label{tab:stress-ng}
 \end{table}
-\subsection{sysbench}
-%TODO: restyle
-CPU Performance: The CPU performance per node is largely uniform across all three environments in terms of average metrics. The addition of maximum latency shows that the single Host is slightly more stable in avoiding high-latency CPU events compared to the clustered environments (VM and Container). The total latency sum is dominated by the test duration. For typical CPU workloads, there's no significant advantage or disadvantage to using VMs or Containers in a cluster compared to a single host based on these results.
-Memory Performance: This is where the significant differences lie. The Container cluster setup provides superior memory throughput per node compared to both the VM cluster and the single Host. The VM cluster exhibits a considerable performance bottleneck for memory operations. The single Host is a solid performer but doesn't reach the peak memory throughput of the Container node. The maximum latency metric suggests slightly less predictability in memory access times within the clustered environments compared to the single host, although the differences are relatively small. The sum of latencies strongly supports the Container's efficiency and the VM's inefficiency in memory handling.
 
-\begin{table}[H]
+
+\subsection{sysbench}
+
+% TODO: what is sysbench? what are events/s? what is the transfer rate? throughput? updates? bandwidth?
+
+CPU performance per node is largely consistent across all three environments -- single host, container cluster, and VM cluster -- when considering average performance metrics. In contrast to CPU performance, memory throughput shows marked differences between environments. The container cluster consistently delivers the highest memory bandwidth, outperforming both the VM cluster and the single-host configuration. The VM cluster, in particular, demonstrates a substantial bottleneck in memory performance, indicating inefficiencies in its virtualized memory subsystem. While the single host achieves respectable memory throughput, it does not match the peak performance seen in the container environment. Cumulative latency figures reinforce the efficiency of the container-based setup and highlight the significant memory handling limitations present in the VM cluster.
+
+\begin{table}[htbp]
     \centering
     \begin{tabular}{lccc}
     \toprule
@@ -210,17 +212,19 @@ Memory Performance: This is where the significant differences lie. The Container
     \bottomrule
 
     \end{tabular}
-    \caption{CPU and Memory performance metrics for VM, Container, and Host environments. The values are reported as mean ± standard deviation, calculated over five measurements ($n = 5$).}
+    \caption{Sysbench performance metrics for VM, Container, and Host environments. The values are reported as mean ± standard deviation, calculated over five measurements ($n = 5$).}
     \label{tab:sysbench}
 \end{table}
 
 
 \subsection{IOZone}
-% TODO: write comparison
-% TODO: add the host machine data to compare
-% TODO: add a table for a fixen filesize to compare in read/write thre three environment
 
-For clarity the plots of the host are not reported(?) but can be found here.
+% 1. explain what is iozone testing and what is plotted in this 3dplots
+% 2. leave only a group of 4 3d plots
+% 2. plot all the three envs for a fixed file size as a function of the stride (or viceversa?)
+
+Let's consider for example the results for the \textbf{reader} test, Figure \ref{fig:reader local and shared}. Immediately we can note, from the changing in the reference throughput scale (z axis) that there is a significant difference when going from the local file system to the shared one. Moreover, when going from the local to the shared system it is evident that container cluster outperform the VM one. This consideration is in general true also for all the other tests reported below in figure \ref{fig:writer local and shared}, \ref{fig:random read local and shared}, \ref{fig:random write local and shared}.
+
 \begin{figure}[H]
     \centering
     \includegraphics[width=\linewidth]{assets/VM local reader_Container local reader_log_surfaces.png}
@@ -265,15 +269,48 @@ For clarity the plots of the host are not reported(?) but can be found here.
     \label{fig:random write local and shared}
 \end{figure}
 
+To analyze better the I/O performance of the two environment and compare them to the one of the host machine (only for the local filesystem), below is reported a plot of the throughput of the three environments as function of the block size for a fixed file size. In the examples in figure \ref{fig:reader_filesize_1024}, \ref{fig:writer_filesize_1024}, \ref{fig:random_read_filesize_1024}, and \ref{fig:random_write_filesize_1024} we can note that the container enviroment, on the shared filesystem, consistently leads to higher throughput than both the VM environment and the host (on the local filesystem). 
+From the plots, we can notice that: the host machine's local filesystem provides a baseline, showing relatively stable performance. Virtualization introduces overhead, which is clearly visible, especially in the VM environment. Docker containers demonstrate significantly better I/O performance than VirtualBox VMs, both on local and shared filesystems. This suggests that the containerization overhead is less impactful on storage performance compared to the full virtualization overhead of VMs in this setup. 
+In VMs, the local filesystem performs noticeably better than the shared filesystem, highlighting the cost of accessing shared storage in this virtualized setup. In Containers, the shared filesystem performs very well, even exceeding the local filesystem at smaller block sizes. This indicates a more efficient shared storage implementation or lower overhead in the Docker environment compared to VirtualBox.
+
+The analysis of the Iozone results clearly shows that the performance of filesystem I/O operations varies significantly between the tested environments. The Host machine provides solid baseline performance. Virtual machines (VirtualBox) introduce substantial overhead, particularly for shared storage, resulting in the lowest observed throughput. Docker containers, on the other hand, demonstrate much better I/O performance, with their shared storage implementation showing surprisingly high throughput at smaller block sizes and generally outperforming the VM shared storage by a large margin. The choice of environment and the configuration of shared storage have a critical impact on file I/O throughput, with containers appearing to be more efficient in this specific test scenario compared to VMs. 
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.8\linewidth]{assets/reader_filesize_1024.png}
+    \caption{Iozone reader benchmark for a fixed file size of 1024 MB. The throughput is reported in MB/s.}
+    \label{fig:reader_filesize_1024}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.8\linewidth]{assets/writer_filesize_1024.png}
+    \caption{Iozone writer benchmark for a fixed file size of 1024 MB. The throughput is reported in MB/s.}
+    \label{fig:writer_filesize_1024}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.8\linewidth]{assets/random read_filesize_1024.png}
+    \caption{Iozone random read benchmark for a fixed file size of 1024 MB. The throughput is reported in MB/s.}
+    \label{fig:random_read_filesize_1024}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.8\linewidth]{assets/random write_filesize_1024.png}
+    \caption{Iozone random write benchmark for a fixed file size of 1024 MB. The throughput is reported in MB/s.}
+    \label{fig:random_write_filesize_1024}
+\end{figure}
+
 \subsection{iperf}
 
-These results directly assess the quality of the network connection between the nodes in the VM cluster versus the nodes in the Container cluster. The TCP results show incredibly high bandwidth in the Docker Container environment, averaging around $42-43$ Gb/s for both upload and download. The VirtualBox network provides much lower TCP bandwidth, averaging around $2.7-2.8$ Gb/s for both upload and download, so it is approximately 15 to 16 times slower than the container TCP network.
+These results provide a direct assessment of the network connection quality between nodes in a virtual machine (VM) cluster and those in a Docker container cluster. The Transmission Control Protocol (TCP) benchmarks reveal significantly higher bandwidth in the containerized environment, with both upload and download speeds averaging approximately $42-43$ Gb/s. In contrast, the VirtualBox-based VM network achieves substantially lower TCP bandwidth, averaging only $2.7-2.8$ Gb/s for both directions. This indicates that the TCP network performance in the container environment is roughly 15 to 16 times greater than that of the VM environment.
 
-The UDP Bitrate (successfully received) is 1.61 Gb/s in Containers compared to 0.44 Gb/s in VMs. The Container network can handle a higher UDP rate. Packet Loss is a critical distinction: the VM network shows a very high average packet loss rate of 15.85\%. This means over 15\% of UDP packets are being dropped at the $\sim 0.44 $Gb/s rate. Moreover, the high standard deviation for VM UDP packet loss (±15.99) indicates highly unstable packet delivery in the VM network. The Container network shows a negligible average packet loss rate of 0.01\% at the higher $\sim 1.61$ Gb/s rate. 
+For User Datagram Protocol (UDP) traffic, the successfully received bitrate further underscores the superior performance of the container network, reaching 1.61 Gb/s compared to just 0.44 Gb/s in the VM setup. A critical distinction emerges in the packet loss metrics: the VM network exhibits a high average packet loss rate of 15.85\%, meaning that over 15\% of UDP packets are dropped even at the relatively modest bitrate of 0.44 Gb/s. Furthermore, the packet loss standard deviation of ±15.99\% indicates highly unstable UDP delivery within the VM cluster. Conversely, the container network maintains an exceptionally low packet loss rate of 0.01\% at the higher 1.61 Gb/s bitrate, reflecting far more reliable performance.
 
-This dramatic difference in the underlying network speed and reliability between the two environments is the overwhelming factor explaining why any benchmark that requires significant data exchange between nodes (like StarSTREAM or MPI components of HPCC) would perform much better on the Docker Container cluster than on the VirtualBox VM cluster. This low network speed directly limits how fast data can be moved between nodes, regardless of how fast the CPUs can process it or how fast local memory is. The VM network's limitations in both bandwidth and stability directly constrain the performance of distributed workloads.
-
-\begin{table}[H]
+This stark contrast in network throughput and reliability is a decisive factor in the superior performance of container-based clusters for distributed workloads, such as StarSTREAM or the Message Passing Interface (MPI) components of the HPCC benchmark suite. The constrained network speed and instability in the VM environment inherently limit data transfer rates between nodes, regardless of CPU processing power or local memory performance. Therefore, the network inefficiencies in the VM configuration significantly hinder the execution of communication-intensive parallel applications.
+\begin{table}[htbp]
     \centering
     \begin{tabular}{lcc}
     \toprule
