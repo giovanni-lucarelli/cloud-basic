@@ -15,5 +15,8 @@
 *.pygtex
 *.pygstyle
 
+# beamer-related files
+*.nav
+*.snm
 TODO.md
 
