@@ -18,5 +18,8 @@
 # beamer-related files
 *.nav
 *.snm
+*.bcf
+*.run.xml
+
 TODO.md
 
