@@ -20,6 +20,7 @@
 *.snm
 *.bcf
 *.run.xml
+*.vrb
 
 TODO.md
 
