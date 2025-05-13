@@ -54,7 +54,8 @@ To determine the nominal memory bandwidth of the system, hardware information wa
 
 \begin{minted}{text}
 Configured Memory Speed: 1867 MT/s
-Number of memory banks: 2
+Bus width per channel: 64 bits = 8 bytes
+Number of channels: 2
 \end{minted}
 
 Based on this information, the theoretical peak memory bandwidth ($\text{BW}_\text{nominal}$) can be calculated as follows:
@@ -164,7 +165,7 @@ According to the stress-ng documentation\footnote{\url{https://wiki.ubuntu.com/K
 
 For the CPU stressor, both the host and the container environments demonstrate nearly identical performance. The minor variability observed between them falls well within the expected margin of experimental variation. In contrast, the VM environment exhibits significantly lower throughput -- approximately 31\% lower than that of the host and container. This degradation in performance is likely attributable to the overhead introduced by the virtualization layer of the hypervisor. A similar trend is observed in the memory stressor results. The VM configuration again yields the lowest performance, falling significantly behind both the host and the container environments, which perform comparably to one another.
 
-For this test, two time metrics are of particular interest: Real Time (or wall-clock time), which measures the total elapsed time for the benchmark from start to finish, and Usr+Sys Time (CPU time), which represents the cumulative time the process spent executing in user and system modes. In the host and container environments, the memory stressor shows a substantial gap between Real Time and CPU Time, which is expected for a well-parallelized, multi-threaded workload that effectively utilizes multiple CPU cores. However, this disparity is notably absent in the VM environment, suggesting that the virtualization layer in VirtualBox impairs parallel execution and CPU resource utilization. This inefficiency results in reduced performance for memory-intensive, multi-threaded workloads when run in the VM as compared to on a native host or within a container.
+For this test, two time metrics are of particular interest: Real Time (or wall-clock time), which measures the total elapsed time for the benchmark from start to finish, and Usr+Sys Time (CPU time), which represents the cumulative time the process spent executing in user and system modes. We observe that in general for the CPU stressor, the Real Time and Usr+Sys Time metrics are nearly identical for each environment. This means that the CPU is fully utilized during the benchmark, and there is no significant overhead from context switching or other system activities. The system has enough cores (e.g., 4 physical cores for 4 threads) and each thread gets its own core and runs simultaneously. For the memory stressor instead, the Real Time and Usr+Sys Time metrics diverge significantly in the host and container environments. Containers run directly on the host kernel with near-native performance, the divergenze in the two times could come from the fact that containers can use memory more efficiently and in full parallel, so each thread contributes more actual CPU time. In this way Usr+Sys time becomes higher than wall-clock time due to summed per-thread CPU time. This asymmetry is notably less pronunced in the VM environment. One possible explanation is that VMs don't access physical memory directly — they go through a virtual memory layer managed by the hypervisor. The net resultis that threads are slower, not all the cores are used and less cumulative CPU time is used.
 
 \begin{table}[htbp]
     \centering
@@ -181,7 +182,7 @@ For this test, two time metrics are of particular interest: Real Time (or wall-c
     Usr+Sys Time & $41.434 \pm 0.952$ & $66.543 \pm 2.954$ & $62.687 \pm 3.254$ \\
     \bottomrule
     \end{tabular}
-    \caption{CPU and Memory performance metrics for VM, Container, and Host environments. The values are reported as mean ± standard deviation, calculated over five measurements ($n = 5$).}
+    \caption{Stress-ng results for VM, Container, and Host environments. The values are reported as mean ± standard deviation, calculated over five measurements ($n = 5$).}
     \label{tab:stress-ng}
 \end{table}
 
@@ -190,7 +191,9 @@ For this test, two time metrics are of particular interest: Real Time (or wall-c
 
 % TODO: what is sysbench? what are events/s? what is the transfer rate? throughput? updates? bandwidth?
 
-CPU performance per node is largely consistent across all three environments -- single host, container cluster, and VM cluster -- when considering average performance metrics. In contrast to CPU performance, memory throughput shows marked differences between environments. The container cluster consistently delivers the highest memory bandwidth, outperforming both the VM cluster and the single-host configuration. The VM cluster, in particular, demonstrates a substantial bottleneck in memory performance, indicating inefficiencies in its virtualized memory subsystem. While the single host achieves respectable memory throughput, it does not match the peak performance seen in the container environment. Cumulative latency figures reinforce the efficiency of the container-based setup and highlight the significant memory handling limitations present in the VM cluster.
+Sysbench provides several test. In particular it has been repeated $5$ times to test each time CPU and memory. The key metrics for the CPU benchmarking are Evets/s that measures how many test events the system can handle per second, so the higher the better. And the latency sum that measures the total latency for all executed events, which gives a measure of how long it took to complete all tasks. For the memory benchmark the key metric is the transfer rate, \textit{i.e.}, the memory bandwidth expressed in Gib/s.
+
+The CPU performance are largely consistent across all three environments, with containers achieving slightly better results. For the memory instead we have a clear winner. The container cluster consistently delivers the highest memory bandwidth, outperforming both the VM cluster and the single-host configuration. The VM cluster, in particular, demonstrates a substantial bottleneck in memory performance, indicating inefficiencies in its virtualized memory subsystem. While the single host achieves respectable memory throughput, it does not match the peak performance seen in the container environment. Cumulative latency figures reinforce the efficiency of the container-based setup and highlight the significant memory handling limitations present in the VM cluster.
 
 \begin{table}[htbp]
     \centering
@@ -200,14 +203,10 @@ CPU performance per node is largely consistent across all three environments -- 
     \midrule
     \textbf{CPU} & & & \\
     Events/s & $453.97 \pm 1.28$ & $459.74 \pm 2.54$ & $452.38 \pm 6.76$ \\
-    Latency min (ms) & $2.04 \pm 0.01$ & $2.03 \pm 0.00$ & $2.05 \pm 0.02$ \\
-    Latency avg (ms) & $2.20 \pm 0.01$ & $2.17 \pm 0.01$ & $2.21 \pm 0.03$ \\
-    Latency max (ms) & $6.05 \pm 1.18$ & $6.14 \pm 2.73$ & $5.49 \pm 1.56$ \\
     Latency sum (ms) & $9998.15 \pm 0.70$ & $9999.55 \pm 0.51$ & $9999.56 \pm 0.72$ \\
     \midrule
     \textbf{Memory} & & & \\
-    Transfer rate (Gib/s) & $3.88 \pm 0.02$ & $5.51 \pm 0.09$ & $5.19 \pm 0.08$ \\
-    Latency max (ms) & $1.26 \pm 0.50$ & $1.32 \pm 0.62$ & $1.09 \pm 0.24$ \\
+    Bandwidth (Gib/s) & $3.88 \pm 0.02$ & $5.51 \pm 0.09$ & $5.19 \pm 0.08$ \\
     Latency sum (ms) & $1066.09 \pm 8.01$ & $839.99 \pm 14.63$ & $895.79 \pm 18.40$ \\
     \bottomrule
 
