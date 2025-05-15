@@ -177,7 +177,7 @@ sudo iptables -t nat -A POSTROUTING -o enp0s3 -j MASQUERADE
 sudo netfilter-persistent save
 \end{minted}
 
-\paragraph{Distributed File System (NFS).}
+\paragraph{Shared File System (NFS).}
 
 A shared directory is created in the master node using the following command:
 
@@ -239,7 +239,7 @@ ssh-copy-id node01
 
 after doing this it is possible to access the worker nodes using \texttt{ssh node01}
 
-\paragraph{Distributed File System Configuration.}
+\paragraph{Shared File System Configuration.}
 To create a mount point for the shared directory, the following command is used:
 
 \begin{minted}[fontsize=\small,breaklines]{bash}
