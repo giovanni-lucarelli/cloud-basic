@@ -26,7 +26,7 @@ Disk: 20 GB
 Operating System: Ubuntu 22.04.5 live server (amd64)
 \end{minted}
 
-and they are built as clones of the same "template". After completing the installation of the OS in the template VMs, it has been configured using the following commands:
+and they are built as clones of the same ``template". After completing the installation of the OS in the template VMs, it has been configured with all the necessary software using the following commands:
 
 \begin{minted}[fontsize=\small,breaklines,frame=lines]{bash}
 sudo apt update && sudo apt upgrade
@@ -40,9 +40,9 @@ nof-common nfs-kernel-server
 sudo shutdown -h now
 \end{minted}
 
-The assessment tools are described in details in section {test-procedures???}. The template VM has been cloned to create \texttt{cluster01} (master) and \texttt{node01} (worker); the second worker has been cloned from the first one after its conficuration. 
+The template VM has been cloned to create \texttt{cluster01} (master) and \texttt{node01} (worker); the second worker has been cloned from the first one after its conficuration. 
 
-\textbf{Note:} when cloning the template VM, it is important to select the option "Reinitialize the MAC address of all network cards" in order to avoid conflicts in the network configuration.
+\textbf{Note:} when cloning the template VM, it is important to select the option \texttt{Reinitialize the MAC address of all network cards} in order to avoid conflicts in the network configuration.
 
 \subsubsection{Network Adapters Configuration}
 
@@ -85,7 +85,7 @@ Since the node has been copied from the template, it has the same username, pass
 sudo nano /etc/hostname
 \end{minted}
 
-The hostname has been changed from `template` to `cluster01`. The same change has been done in the `/etc/hosts` file. 
+The hostname has been changed from \texttt{template} to \texttt{cluster01}. The same change has been done in the \texttt{/etc/hosts} file. 
 
 \begin{minted}[fontsize=\small,breaklines]{yaml}
 127.0.0.1 localhost
@@ -108,7 +108,7 @@ The master node is configured to act as DNS, DHCP and gateway of the cluster. Th
 \end{table}
 
 
-The configuration is done using the `netplan` tool. The configuration file is located in `/etc/netplan/50-cloud-init.yaml` and it is as follows:
+The configuration is done using the \texttt{netplan} tool. The configuration file is located in \texttt{/etc/netplan/50-cloud-init.yaml} and it is as follows:
 
 \begin{minted}[fontsize=\small,breaklines,frame=lines]{yaml}
 network:
@@ -133,7 +133,7 @@ sudo netplan apply
 
 \paragraph{DNS Configuration (dnsmasq).}
 
-The DHCP server is configured using the \texttt{dnsmasq} tool. The configuration file is located in `/etc/dnsmasq.conf` and it is as follows:
+The DHCP server is configured using the \texttt{dnsmasq} tool. The configuration file is located in \texttt{/etc/dnsmasq.conf} and it is as follows:
 
 \begin{minted}[fontsize=\small,breaklines,frame=lines]{yaml}
 port=53
@@ -149,7 +149,7 @@ dhcp-option=option:dns-server,192.168.0.1
 dhcp-option=3
 \end{minted}
 
-in order to control the way `dnsmasq` interacts with `resolv.conf`, the following lines have been uncommented in the `/etc/default/dnsmasq` file:
+in order to control the way \texttt{dnsmasq} interacts with \texttt{resolv.conf}, the following lines have been uncommented in the \texttt{/etc/default/dnsmasq} file:
 \begin{minted}{yaml}
 IGNORE_RESOLVCONF=yes
 DNSMASQ_EXCEPT="lo"
@@ -162,7 +162,7 @@ sudo systemctl restart dnsmasq systemd-resolved
 \paragraph{Gateway Configuration.}
 
 
-The gateway is configured by creating the file `etc/sysctl.d/99-sysctl.conf` with the following content:
+The gateway is configured by creating the file \texttt{etc/sysctl.d/99-sysctl.conf} with the following content:
 
 \begin{minted}[fontsize=\small,breaklines]{yaml}
 net.ipv4.ip_forward=1
@@ -186,7 +186,7 @@ sudo mkdir /shared
 sudo chmod 777 /shared
 sudo nano /etc/exports
 \end{minted}
-The content of the `/etc/exports` file is as follows:
+The content of the \texttt{/etc/exports} file is as follows:
 
 \begin{minted}[fontsize=\small,breaklines]{yaml}
 /shared/ 192.168.0.0/255.255.255.240(rw,sync,no_root_squash,no_subtree_check)
@@ -205,11 +205,11 @@ Analogously to the master node, the hostname of the worker nodes has been change
 \begin{minted}{bash}
 sudo nano /etc/hostname
 \end{minted}
-The hostname has been changed from `template` to `node01`. 
+The hostname has been changed from \texttt{template} to \texttt{node01}. 
 
 \paragraph{Network Configuration}
 
-The network configuration file, located in `/etc/netplan/50-cloud-init.yaml`, it has been modified as follows:
+The network configuration file, located in \\\texttt{/etc/netplan/50-cloud-init.yaml}, it has been modified as follows:
 \begin{minted}[fontsize=\small,breaklines]{yaml}
 network:
   ethernets:
@@ -256,12 +256,12 @@ and to make the mount persistent across reboots the package AutoFS is installed
 sudo apt -y install autofs
 \end{minted}
 
-then in the `auto.master` configuration file the following line has been added in order to include the mount point
+then in the \texttt{auto.master} configuration file the following line has been added in order to include the mount point
 
 \begin{minted}[fontsize=\small,breaklines]{bash}
 /- /etc/auto.mount
 \end{minted}
-In order to define the NFS mount the AutoFS configuration file (`auto.mount`) has been created and the following line has been added:
+In order to define the NFS mount the AutoFS configuration file (\texttt{auto.mount}) has been created and the following line has been added:
 \begin{minted}[fontsize=\small,breaklines]{yaml}
 /shared -fstype=nfs,rw  192.168.0.1:/shared
 \end{minted}
@@ -271,7 +271,7 @@ sudo systemctl restart autofs
 \end{minted}
 
 \paragraph{Clone the Worker Node.}
-The second worker node has been cloned from the first one after its configuration. The hostname of the second worker node has been changed in the usual way in `node02`. 
+The second worker node has been cloned from the first one after its configuration. The hostname of the second worker node has been changed in the usual way in \texttt{node02}. 
 
 \subsection{Container Setup}
 
@@ -436,13 +436,13 @@ docker exec -it cluster01 bash
 # or
 ssh -p 2220 user01@localhost
 \end{minted}
-In order to give the user01 the permission to access the shared directory, the following command is used:
+In order to give the \texttt{user01} the permission to access the shared directory, the following command is used:
 
 \begin{minted}{bash}
 sudo chown -R user01:user01 /shared
 \end{minted}
 
-In order to access the each node from each other, the SSH service has been configured manually using , from `cluster01` for example:
+In order to access the each node from each other, the SSH service has been configured manually using , from \texttt{cluster01} for example:
 
 \begin{minted}{bash}
 ssh node01
@@ -463,16 +463,16 @@ Two useful commands to manage the docker containers are: \texttt{docker ps} to s
 The following benchmarking tools have been used to perform the tests:
 
 \begin{itemize}
-    \item \textbf{HPC Challenge Benchmark}: A comprehensive suite of tests designed to measure the performance of high-performance computing systems. It evaluates both memory and computational performance using a variety of tests like HPL (High Performance Linpack), DGEMM, FFT, and STREAM.\footnote{\url{https://hpcchallenge.org/hpcc/faq/index_print.html}}
-    \item \texttt{stress-ng}: A tool for stress-testing CPUs, memory, I/O, and other system components. It's useful for validating system stability under heavy load by running various stressors in parallel.
-    \item \texttt{sysbench}: A modular benchmarking tool for evaluating system parameters such as CPU, memory and disk I/O.
-    \item \texttt{iozone}: A filesystem benchmark tool used to measure I/O performance across various operations such as read, write, re-read, and random access.
-    \item \texttt{iperf}: A network testing tool used to measure bandwidth and throughput between two endpoints over TCP or UDP. 
+    \item \textbf{HPC Challenge}: A comprehensive suite of tests designed to measure the performance of high-performance computing systems. It evaluates both memory and computational performance using a variety of tests like HPL (High Performance Linpack), DGEMM, FFT, and STREAM.\footnote{\url{https://hpcchallenge.org/hpcc/faq/index_print.html}}
+    \item \textbf{Stress-ng}: A tool for stress-testing CPUs, memory, I/O, and other system components. It's useful for validating system stability under heavy load by running various stressors in parallel.
+    \item \textbf{Sysbench}: A modular benchmarking tool for evaluating system parameters such as CPU, memory and disk I/O.
+    \item \textbf{Iozone}: A filesystem benchmark tool used to measure I/O performance across various operations such as read, write, re-read, and random access.
+    \item \textbf{Iperf}: A network testing tool used to measure bandwidth and throughput between two endpoints over TCP or UDP. 
 \end{itemize}
 
 The measurements were performed multiple times in each environment -- VMs, containers and on the host whenever possible --  in order to have also a measure of the variability of each benchmark. Since every environment runs the same operating system, the same script have been used across all the environment; moreover, during each measurement process has been ensured that no other heavy processes were running on the host machine during the tests.\\
 
-\par Since we're testing the cluster environment and most of the tests need passwordless ssh protocol (from master to workers) is a good practice to run the following command before running the tests (both no VMs and containers) to be sure that everything works fine:
+\par Since we're testing the cluster environment and most of the tests need passwordless SSH protocol (from master to workers) is a good practice to run the following command before running the tests (both no VMs and containers) to be sure that everything works fine:
 
 \begin{minted}{bash}
 mpirun -np 4 -hostfile hosts hostname
@@ -488,11 +488,11 @@ node02
 \end{minted}
 
 \subsubsection{HPCC}
-All the tests have been runned in the \texttt{ /shared} folder, the first step is to locate the \texttt{hpcc} executable file and to locate it (and all the relative configurations file) in the former directory using:
+All the tests have been runned in the \texttt{/shared} folder, and the first step to run such benchmark is to locate the \texttt{hpcc} executable file and to copy it (and all the relative configurations file) in the former directory using:
 
 \begin{minted}{bash}
 which hpcc
- cp -r /path/to/hpcc /shared/hpcc
+cp -r /path/to/hpcc /shared/hpcc
 \end{minted}
 
 The configuration file for the HPCC, namely \texttt{hpccinf.txt} has been obtained consulting the \href{https://www.advancedclustering.com/act_kb/tune-hpl-dat-file/}{website} reccomended during the lessons.
@@ -543,7 +543,7 @@ node01 slots=2
 node02 slots=2
 \end{minted}
 
- defines the nodes in which the hpcc benchmark will be executed in a distributed environment, specifying also the number of slots for each node, \textit{, i.e.}, the number of processors (logical or physical) available for the parallel execution of the MPI processes. The test has been repeated three times using the command:
+ defines the nodes in which the hpcc benchmark will be executed in a distributed environment, specifying also the number of slots for each node, \textit{i.e.}, the number of processors (logical or physical) available for the parallel execution of the MPI processes. The test has been repeated three times using the command:
  
 \begin{minted}[fontsize=\small,breaklines]{bash}
 mpirun -np 4 -hostfile hosts hpcc
@@ -663,4 +663,4 @@ iperf3 -c cluster01 -R # TCP Reverse test (download)
 iperf3 -c cluster01 -u -b 3G # UDP test (upload)
 \end{minted}
 
-the flag \texttt{-c} puts the program into \textbf{client mode}. With this commands are tested two core network communication protocols, namely TCP (upload and download) and UDP (upload). The flag \texttt{-b} is used to set the target bandwidth, the default value is 1 Mbit/sec for UDP and unlimited for TCP. The value of 3 Gbit/sec is used to test the maximum bandwidth of the network, after some trials to find the value in order to saturate the channel.
+the flag \texttt{-c} puts the program into \textbf{client mode}. With this commands are tested two core network communication protocols, namely TCP (upload and download) and UDP (upload). The flag \texttt{-b} is used to set the target bandwidth, the default value is 1 Mb/s for UDP and unlimited for TCP. The value of 3 Gb/s is used to test the maximum bandwidth of the network, after some trials to find the value in order to saturate the channel.
