@@ -308,9 +308,6 @@ RUN mkdir -p /home/user01/.ssh && \
     chmod 600 /home/user01/.ssh/id_rsa /home/user01/.ssh/authorized_keys && \
     chown -R user01:user01 /home/user01/.ssh
 
-# Copy the public key to a shared location (optional)
-RUN cp /home/user01/.ssh/id_rsa.pub /tmp/user01_rsa.pub
-
 # Create the directory for privilege separation
 RUN mkdir -p /run/sshd
 
