@@ -263,20 +263,27 @@ $$
 \end{frame}
 
 \begin{frame}{Stress-ng: CPU}
-  Number of repetition: \textbf{5}
+  Repetitions: \textbf{5}
   \begin{figure}
     \centering
-    \includegraphics[width=0.7\textwidth]{stress_ng_cpu_performance.png}
+    \includegraphics[width=0.6\textwidth]{stress_ng_cpu_performance.png}
   \end{figure}
+  \begin{itemize}
+    \item $\texttt{real} \approx \texttt{usr + sys}$: no significant waiting time
+    \item VMs: fewer operations, higher CPU time per operation
+  \end{itemize}
 \end{frame}
 
 \begin{frame}{Stress-ng: Memory}
-  Number of repetition: \textbf{5}
+  Repetitions: \textbf{5}
   \begin{figure}
     \centering
-    \includegraphics[width=0.7\textwidth]{stress_ng_memory_performance.png}
+    \includegraphics[width=0.6\textwidth]{stress_ng_memory_performance.png}
   \end{figure}
-  \centering{\alert{Asymmetry} between two time scales}
+  \begin{itemize}
+    \item Containers and Host: $\texttt{real} > \texttt{usr + sys}$ → some waiting time
+    \item VMs: $\texttt{real} \approx \texttt{usr + sys}$ → less waiting, but still higher CPU time per operation
+  \end{itemize}
 \end{frame}
 
 
@@ -294,7 +301,7 @@ $$
     Latency sum (ms) & $9998.15 \pm 0.70$ & $9999.55 \pm 0.51$ & $9999.56 \pm 0.72$ \\
     \midrule
     \textbf{Memory} & & & \\
-    Bandwidth (Gib/s) & $3.88 \pm 0.02$ & $\mathbf{5.51 \pm 0.09}$ & $5.19 \pm 0.08$ \\
+    Throughput (Gib/s) & $3.88 \pm 0.02$ & $\mathbf{5.51 \pm 0.09}$ & $5.19 \pm 0.08$ \\
     Latency sum (ms) & $1066.09 \pm 8.01$ & $\mathbf{839.99 \pm 14.63}$ & $895.79 \pm 18.40$ \\
     \bottomrule
     \end{tabular}
