@@ -2,3 +2,5 @@
 
 The objective of this project is to conduct a comparative performance evaluation of a cluster of nodes as Virtual Machines (VMs) and Containers, specifically focusing on VirtualBox and Docker.  
 The evaluation will be based on a series of benchmarks that measure various performance metrics, including CPU, memory, disk I/O, and network throughput, namely: `hpcc`, `stressng`, `sysbench`, `IOZone`, `iperf`. Finally some of them will be discussed comparing the performance of the two supports and whenever possible also with the ones ont he sole host machine (no cluster).
+
+The full report of the project is avaiable here: [Final Report](./report/main.pdf)
