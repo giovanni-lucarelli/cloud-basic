@@ -68,6 +68,7 @@ Among the STREAM operations, the \textit{Copy} operation -- being highly optimiz
 
 In the \textbf{StarSTREAM} benchmark the container environment again surpassed the VM setup. As data exchange between nodes necessitates significant network communication and synchronization, the effective memory bandwidth becomes constrained also by network bandwidth and latency rather than only local memory speed. Consequently, performance declines significantly compared to SingleSTREAM, with the observed bandwidth reaching only approximately 20\% of the nominal maximum. This performance degradation is particularly pronounced in the VM cluster, probably due to the overhead associated with the virtualized of the network interface.
 
+
 \paragraph{RandomAccess (RA) Benchmark}
 
 The RandomAccess benchmark quantifies the rate of random memory updates, expressed in mega updates per second (MUP/s). Unlike STREAM, which focuses on sequential memory access patterns, RandomAccess evaluates the system's efficiency in handling numerous small, non-contiguous memory accesses. 
@@ -77,7 +78,6 @@ In the MPI implementation of this benchmark, the host environment exhibited disp
 \paragraph{PTRANS Benchmark}
 
 The PTRANS benchmark assesses global memory bandwidth in parallel computing systems by measuring the rate at which large matrices can be transposed across processor nodes. It effectively gauges the system's capability to efficiently move large volumes of data between memory spaces on different nodes. Results from this benchmark further reinforce the significant impact of network performance on distributed memory operations. The container cluster demonstrated strong performance, whereas the VM cluster exhibited severe limitations, likely attributable to the same network bottlenecks identified in the StarSTREAM and MPI benchmarks. As shown later we will see that the main bottleneck of the virtual machines environment lies exactly in the network.
-
 
 \begin{table}[htbt]
 \centering
@@ -274,29 +274,29 @@ In VMs, the local filesystem performs noticeably better than the shared filesyst
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.8\linewidth]{assets/reader_filesize_1024.png}
-    \caption{Iozone reader benchmark for a fixed file size of 1024 MB. The throughput is reported in MB/s.}
+    \includegraphics[width=0.8\linewidth]{assets/reader_filesize_16384.png}
+    \caption{Iozone reader benchmark for a fixed file size of 16384 MB. The throughput is reported in MB/s.}
     \label{fig:reader_filesize_1024}
 \end{figure}
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.8\linewidth]{assets/writer_filesize_1024.png}
-    \caption{Iozone writer benchmark for a fixed file size of 1024 MB. The throughput is reported in MB/s.}
+    \includegraphics[width=0.8\linewidth]{assets/writer_filesize_16384.png}
+    \caption{Iozone writer benchmark for a fixed file size of 16384 MB. The throughput is reported in MB/s.}
     \label{fig:writer_filesize_1024}
 \end{figure}
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.8\linewidth]{assets/random read_filesize_1024.png}
-    \caption{Iozone random read benchmark for a fixed file size of 1024 MB. The throughput is reported in MB/s.}
+    \includegraphics[width=0.8\linewidth]{assets/random read_filesize_16384.png}
+    \caption{Iozone random read benchmark for a fixed file size of 16384 MB. The throughput is reported in MB/s.}
     \label{fig:random_read_filesize_1024}
 \end{figure}
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.8\linewidth]{assets/random write_filesize_1024.png}
-    \caption{Iozone random write benchmark for a fixed file size of 1024 MB. The throughput is reported in MB/s.}
+    \includegraphics[width=0.8\linewidth]{assets/random write_filesize_16384.png}
+    \caption{Iozone random write benchmark for a fixed file size of 16384 MB. The throughput is reported in MB/s.}
     \label{fig:random_write_filesize_1024}
 \end{figure}
 
